@@ -9,8 +9,14 @@ import org.slf4j.LoggerFactory;
 import com.pennassurancesoftware.tutum.client.TutumClient;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.NodeCluster;
+import com.pennassurancesoftware.tutum.dto.NodeClusters;
+import com.pennassurancesoftware.tutum.dto.NodeType;
+import com.pennassurancesoftware.tutum.dto.NodeTypes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
+import com.pennassurancesoftware.tutum.dto.Region;
+import com.pennassurancesoftware.tutum.dto.Regions;
 
 public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
@@ -59,5 +65,93 @@ public class TutumIntegrationTest {
 
       Assert.assertNotNull( provider );
       LOG.info( provider.toString() );
+   }
+
+   @Test
+   public void testRegions() throws Exception {
+      final Regions regions = apiClient.getRegions( 1 );
+
+      Assert.assertNotNull( regions );
+      Assert.assertTrue( ( regions.getObjects().size() > 0 ) );
+
+      for( Region provider : regions.getObjects() ) {
+         LOG.info( provider.toString() );
+      }
+   }
+
+   @Test
+   public void testRegion() throws Exception {
+      final String providerName = "digitalocean";
+      final String regionName = "sgp1";
+      final Region region = apiClient.getRegion( providerName, regionName );
+
+      Assert.assertNotNull( region );
+      LOG.info( region.toString() );
+   }
+
+   @Test
+   public void testNodeTypes() throws Exception {
+      final NodeTypes nodeTypes = apiClient.getNodeTypes( 1 );
+
+      Assert.assertNotNull( nodeTypes );
+      Assert.assertTrue( ( nodeTypes.getObjects().size() > 0 ) );
+
+      for( NodeType type : nodeTypes.getObjects() ) {
+         LOG.info( type.toString() );
+      }
+   }
+
+   @Test
+   public void testNodeType() throws Exception {
+      final String providerName = "digitalocean";
+      final String nodeTypeName = "32gb";
+      final NodeType nodeType = apiClient.getNodeType( providerName, nodeTypeName );
+
+      Assert.assertNotNull( nodeType );
+      LOG.info( nodeType.toString() );
+   }
+
+   @Test
+   public void testNodeClusters() throws Exception {
+      final NodeClusters clusters = apiClient.getNodeClusters( 1 );
+
+      Assert.assertNotNull( clusters );
+      Assert.assertTrue( ( clusters.getObjects().size() > 0 ) );
+
+      for( NodeCluster cluster : clusters.getObjects() ) {
+         LOG.info( cluster.toString() );
+      }
+   }
+
+   @Test
+   public void testNodeCluster() throws Exception {
+      final String clusterid = "f648b285-7ddd-4bf2-9ed2-26ee2c215db6";
+      final NodeCluster cluster = apiClient.getNodeCluster( clusterid );
+
+      Assert.assertNotNull( cluster );
+      LOG.info( cluster.toString() );
+   }
+
+   @Test
+   public void testCreateNodeCluster() throws Exception {
+      final NodeCluster cluster = new NodeCluster();
+      cluster.setName( "junit" );
+      cluster.setRegion( "/api/v1/region/digitalocean/nyc3/" );
+      cluster.setNodeType( "/api/v1/nodetype/digitalocean/512mb/" );
+      cluster.setTargetNumNodes( 1 );
+      cluster.setProvider( "digitalocean" );
+
+      final NodeCluster result = apiClient.createNodeCluster( cluster );
+
+      Assert.assertNotNull( result );
+      LOG.info( result.toString() );
+   }
+
+   // @Test
+   public void testDeployNodeCluster() throws Exception {
+      final NodeCluster result = apiClient.deployNodeCluster( "22b7fc76-0c69-4703-9924-6e84e57b812e" );
+
+      Assert.assertNotNull( result );
+      LOG.info( result.toString() );
    }
 }

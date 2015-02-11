@@ -20,7 +20,9 @@
  */
 package com.pennassurancesoftware.tutum.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -57,8 +59,14 @@ import com.google.gson.JsonSyntaxException;
 import com.pennassurancesoftware.tutum.Tutum;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.NodeCluster;
+import com.pennassurancesoftware.tutum.dto.NodeClusters;
+import com.pennassurancesoftware.tutum.dto.NodeType;
+import com.pennassurancesoftware.tutum.dto.NodeTypes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
+import com.pennassurancesoftware.tutum.dto.Region;
+import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -724,18 +732,10 @@ public class TutumClient implements Tutum {
          response = doDelete( uri );
       }
 
-      ApiResponse apiResponse = new ApiResponse( request.getApiAction(), true );
+      final ApiResponse apiResponse = new ApiResponse( request.getApiAction(), true );
 
       try {
-         if( request.isCollectionElement() ) {
-            apiResponse.setData( deserialize.fromJson( response, request.getClazz() ) );
-         }
-         else {
-            JsonObject rootObject = jsonParser.parse( response ).getAsJsonObject();
-            // JsonObject elementObject = rootObject.get( request.getElementName() ).getAsJsonObject();
-            // elementObject.add( Constants.RATE_LIMIT_ELEMENT_NAME, rootObject.get( Constants.RATE_LIMIT_ELEMENT_NAME ) );
-            apiResponse.setData( deserialize.fromJson( rootObject, request.getClazz() ) );
-         }
+         apiResponse.setData( deserialize.fromJson( response, request.getClazz() ) );
       }
       catch( JsonSyntaxException jse ) {
          LOG.error( "Error occurred while parsing response", jse );
@@ -753,20 +753,43 @@ public class TutumClient implements Tutum {
       return executeHttpRequest( get );
    }
 
-   private String doPost( URI uri, StringEntity entity ) throws TutumException,
-         RequestUnsuccessfulException {
-      HttpPost post = new HttpPost( uri );
+   private String doPost( URI uri, StringEntity entity ) throws TutumException, RequestUnsuccessfulException {
+      final HttpPost post = new HttpPost( uri );
       post.setHeaders( getRequestHeaders() );
 
       if( null != entity ) {
          post.setEntity( entity );
+         LOG.debug( "POST Message: {}", readString( entity ) );
       }
 
       return executeHttpRequest( post );
    }
 
-   private String doPut( URI uri, StringEntity entity ) throws TutumException,
-         RequestUnsuccessfulException {
+   private String readString( StringEntity entity ) {
+      try {
+         return readString( entity.getContent() );
+      }
+      catch( Exception exception ) {
+         throw new RuntimeException( "Error reading String Entity", exception );
+      }
+   }
+
+   private String readString( InputStream inputStream ) {
+      try {
+         final ByteArrayOutputStream into = new ByteArrayOutputStream();
+         byte[] buf = new byte[4096];
+         for( int n; 0 < ( n = inputStream.read( buf ) ); ) {
+            into.write( buf, 0, n );
+         }
+         into.close();
+         return new String( into.toByteArray(), "UTF-8" ); // Or whatever encoding
+      }
+      catch( Exception exception ) {
+         throw new RuntimeException( "Error reading InputStream", exception );
+      }
+   }
+
+   private String doPut( URI uri, StringEntity entity ) throws TutumException, RequestUnsuccessfulException {
       HttpPut put = new HttpPut( uri );
       put.setHeaders( getRequestHeaders() );
 
@@ -885,12 +908,10 @@ public class TutumClient implements Tutum {
 
    private StringEntity createRequestData( ApiRequest request ) {
       StringEntity data = null;
-
       if( null != request.getData() ) {
-         String inputData = serialize.toJson( request.getData() );
+         final String inputData = serialize.toJson( request.getData() );
          data = new StringEntity( inputData, ContentType.create( Constants.JSON_CONTENT_TYPE ) );
       }
-
       return data;
    }
 
@@ -950,9 +971,7 @@ public class TutumClient implements Tutum {
    private void initialize() {
       this.deserialize = new GsonBuilder().setDateFormat( Constants.DATE_FORMAT ).create();
 
-      this.serialize =
-            new GsonBuilder().setDateFormat( Constants.DATE_FORMAT )
-                  .excludeFieldsWithoutExposeAnnotation().create();
+      this.serialize = new GsonBuilder().setDateFormat( Constants.DATE_FORMAT ).excludeFieldsWithoutExposeAnnotation().create();
 
       this.jsonParser = new JsonParser();
 
@@ -986,4 +1005,65 @@ public class TutumClient implements Tutum {
       final Object[] params = { name };
       return ( Provider )perform( new ApiRequest( ApiAction.GET_PROVIDER, params ) ).getData();
    }
+
+   @Override
+   public Regions getRegions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, pageNo ) ).getData();
+   }
+
+   @Override
+   public Region getRegion( String providerName, String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( providerName, "Missing required parameter - Provider Name." );
+      checkNullAndThrowError( name, "Missing required parameter - Region Name." );
+      final Object[] params = { providerName, name };
+      return ( Region )perform( new ApiRequest( ApiAction.GET_REGION, params ) ).getData();
+   }
+
+   @Override
+   public NodeTypes getNodeTypes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, pageNo ) ).getData();
+   }
+
+   @Override
+   public NodeType getNodeType( String providerName, String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( providerName, "Missing required parameter - Provider Name." );
+      checkNullAndThrowError( name, "Missing required parameter - Node Type Name." );
+      final Object[] params = { providerName, name };
+      return ( NodeType )perform( new ApiRequest( ApiAction.GET_NODETYPE, params ) ).getData();
+   }
+
+   @Override
+   public NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, pageNo ) ).getData();
+   }
+
+   @Override
+   public NodeCluster getNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.GET_NODECLUSTER, params ) ).getData();
+   }
+
+   @Override
+   public NodeCluster createNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
+      if( null == cluster
+            || null == cluster.getName()
+            || null == cluster.getRegion()
+            || null == cluster.getNodeType() ) {
+         throw new IllegalArgumentException(
+               "Missing required parameters [Name, Region, Node Type] for create node cluster." );
+      }
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.CREATE_NODECLUSTER, cluster ) ).getData();
+   }
+
+   @Override
+   public NodeCluster deployNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.DEPLOY_NODECLUSTER, params ) ).getData();
+   }
+
 }

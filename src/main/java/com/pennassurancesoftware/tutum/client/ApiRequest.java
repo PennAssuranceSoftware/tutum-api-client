@@ -99,22 +99,11 @@ public class ApiRequest {
       this.pageNo = pageNo;
    }
 
-   public Boolean isCollectionElement() {
-      return getElementName().endsWith( "s" );
-   }
-
    /**
     * @return the path
     */
    public String getPath() {
       return apiAction.getPath();
-   }
-
-   /**
-    * @return the elementName
-    */
-   public String getElementName() {
-      return apiAction.getElementName();
    }
 
    /**

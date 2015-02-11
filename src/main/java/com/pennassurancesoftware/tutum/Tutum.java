@@ -22,8 +22,14 @@ package com.pennassurancesoftware.tutum;
 
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.NodeCluster;
+import com.pennassurancesoftware.tutum.dto.NodeClusters;
+import com.pennassurancesoftware.tutum.dto.NodeType;
+import com.pennassurancesoftware.tutum.dto.NodeTypes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
+import com.pennassurancesoftware.tutum.dto.Region;
+import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -132,6 +138,119 @@ public interface Tutum {
     */
    Provider getProvider( String name ) throws TutumException, RequestUnsuccessfulException;
 
+   /**
+    * Lists all regions of all supported cloud providers. Returns a list of Region objects.
+    * 
+    * @param pageNo for pagination
+    * @return {@link Regions}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    **/
+   Regions getRegions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given provider name and region name
+    * 
+    * @param providerName Name of the provider
+    * @param name Name of the region
+    * @return {@link Region}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   Region getRegion( String providerName, String name ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all node types of all supported cloud providers. Returns a list of NodeType objects.
+    * 
+    * @param pageNo for pagination
+    * @return {@link NodeTypes}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    **/
+   NodeTypes getNodeTypes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Get all the details of a specific node type
+    * 
+    * @param providerName Name of the provider
+    * @param name Name of the node type
+    * @return {@link NodeType}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeType getNodeType( String providerName, String name ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all current and recently terminated node clusters. Returns a list of NodeCluster objects.
+    * 
+    * @param pageNo for pagination
+    * @return {@link NodeClusters}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    **/
+   NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Get all the details of an specific node cluster
+    * 
+    * @param uuid the id of the action
+    * @return {@link NodeCluster}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeCluster getNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * <p>
+    * Method allows you to create a new Node Cluster. See the required parameters section below for an
+    * explanation of the variables that are needed to create a new Node Cluster.
+    * </p>
+    * <p>
+    * Create a instance of {@link NodeCluster} class and populated the object appropriately.
+    * Minimum required values are -
+    * </p>
+    * 
+    * <pre>
+    * {
+    *   "name": "mycluster",
+    *   "region": "/api/v1/region/digitalocean/lon1/",
+    *   "node_type": "/api/v1/nodetype/digitalocean/1gb/"
+    * }
+    * </pre>
+    * 
+    * @param cluster Object that will used to create the new cluster
+    * @return {@link NodeCluster}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeCluster createNodeCluster( NodeCluster droplet ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Deploys and provisions a recently created node cluster in the specified region and cloud provider.
+    * 
+    * @param uuid the id of the node cluster
+    * @return {@link NodeCluster}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeCluster deployNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
    //  /**
    //   * Method returns all available kernels for given droplet ID
    //   * 
@@ -187,37 +306,7 @@ public interface Tutum {
    //  Droplet getDropletInfo(Integer dropletId) throws TutumException,
    //      RequestUnsuccessfulException;
    //
-   //  /**
-   //   * <p>
-   //   * Method allows you to create a new droplet. See the required parameters section below for an
-   //   * explanation of the variables that are needed to create a new droplet.
-   //   * </p>
-   //   * <p>
-   //   * <strong>Note:</strong> Currently return object doesn't include 'action' information of create
-   //   * droplet.
-   //   * </p>
-   //   * <p>
-   //   * Create a instance of {@link Droplet} class and populated the droplet object appropriately.
-   //   * Minimum required values are -
-   //   * </p>
-   //   * 
-   //   * <pre>
-   //   * {
-   //   *   "name": "example-droplet-name",
-   //   *   "region": "nyc1",
-   //   *   "size": "512mb",
-   //   *   "image": 3445812
-   //   * }
-   //   * </pre>
-   //   * 
-   //   * @param droplet the id of the droplet
-   //   * @return {@link Droplet}
-   //   * @throws TutumException
-   //   * @throws RequestUnsuccessfulException
-   //   * 
-   //   * @since v1.0
-   //   */
-   //  Droplet createDroplet(Droplet droplet) throws TutumException, RequestUnsuccessfulException;
+
    //
    //  /**
    //   * Method destroys one of your droplet; this is irreversible.

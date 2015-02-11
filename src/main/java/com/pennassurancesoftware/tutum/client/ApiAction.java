@@ -22,18 +22,32 @@ package com.pennassurancesoftware.tutum.client;
 
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.NodeCluster;
+import com.pennassurancesoftware.tutum.dto.NodeClusters;
+import com.pennassurancesoftware.tutum.dto.NodeType;
+import com.pennassurancesoftware.tutum.dto.NodeTypes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
+import com.pennassurancesoftware.tutum.dto.Region;
+import com.pennassurancesoftware.tutum.dto.Regions;
 
 /**
  * Enumeration of Tutum RESTful resource information.
  */
 public enum ApiAction {
 
-   ACTIONS("/action", "actions", RequestMethod.GET, Actions.class),
-   GET_ACTION("/action/%s", "action", RequestMethod.GET, Action.class),
-   PROVIDERS("/provider", "providers", RequestMethod.GET, Providers.class),
-   GET_PROVIDER("/provider/%s", "action", RequestMethod.GET, Provider.class),
+   ACTIONS("/action", RequestMethod.GET, Actions.class),
+   GET_ACTION("/action/%s", RequestMethod.GET, Action.class),
+   PROVIDERS("/provider", RequestMethod.GET, Providers.class),
+   GET_PROVIDER("/provider/%s", RequestMethod.GET, Provider.class),
+   REGIONS("/region", RequestMethod.GET, Regions.class),
+   GET_REGION("/region/%s/%s", RequestMethod.GET, Region.class),
+   NODETYPES("/nodetype", RequestMethod.GET, NodeTypes.class),
+   GET_NODETYPE("/nodetype/%s/%s", RequestMethod.GET, NodeType.class),
+   NODECLUSTERS("/nodecluster", RequestMethod.GET, NodeClusters.class),
+   GET_NODECLUSTER("/nodecluster/%s", RequestMethod.GET, NodeCluster.class),
+   CREATE_NODECLUSTER("/nodecluster/", RequestMethod.POST, NodeCluster.class),
+   DEPLOY_NODECLUSTER("/nodecluster/%s/deploy/", RequestMethod.POST, NodeCluster.class),
 
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),
@@ -103,31 +117,24 @@ public enum ApiAction {
    //  UPDATE_KEY("/account/keys/%s", "ssh_key", RequestMethod.PUT, Key.class),
    //  DELETE_KEY("/account/keys/%s", "delete", RequestMethod.DELETE, Delete.class);
 
-   NULL(null, ( RequestMethod )null), ;
+   ;
 
    private String path;
-
-   private String elementName;
 
    private RequestMethod method;
 
    private Class<?> clazz;
 
+   ApiAction( String path ) {
+      this( path, RequestMethod.GET );
+   }
+
    ApiAction( String path, RequestMethod method ) {
-      this( path, null, method );
+      this( path, method, null );
    }
 
-   ApiAction( String path, String elementName ) {
-      this( path, elementName, RequestMethod.GET );
-   }
-
-   ApiAction( String path, String elementName, RequestMethod method ) {
-      this( path, elementName, method, null );
-   }
-
-   ApiAction( String path, String elementName, RequestMethod method, Class<?> clazz ) {
+   ApiAction( String path, RequestMethod method, Class<?> clazz ) {
       this.path = path;
-      this.elementName = elementName;
       this.method = method;
       this.clazz = clazz;
    }
@@ -137,13 +144,6 @@ public enum ApiAction {
     */
    public String getPath() {
       return path;
-   }
-
-   /**
-    * @return the elementName
-    */
-   public String getElementName() {
-      return elementName;
    }
 
    /**
