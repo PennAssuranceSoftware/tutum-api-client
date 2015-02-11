@@ -25,5 +25,5 @@ package com.pennassurancesoftware.tutum.client;
  * @since v2.0
  */
 public enum RequestMethod {
-   GET, POST, PUT, DELETE;
+   GET, POST, PUT, DELETE, PATCH;
 }

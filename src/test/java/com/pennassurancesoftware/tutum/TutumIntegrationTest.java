@@ -17,12 +17,13 @@ import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.Regions;
+import com.pennassurancesoftware.tutum.dto.Tag;
 
 public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "" );
+   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
 
    @Test
    public void testActions() throws Exception {
@@ -111,8 +112,22 @@ public class TutumIntegrationTest {
       LOG.info( nodeType.toString() );
    }
 
-   @Test
+   // @Test
    public void testNodeClusters() throws Exception {
+      // Create
+      final NodeCluster create = new NodeCluster();
+      create.setName( "junit3" );
+      create.setRegion( "/api/v1/region/digitalocean/nyc3/" );
+      create.setNodeType( "/api/v1/nodetype/digitalocean/512mb/" );
+      create.setTargetNumNodes( 1 );
+      create.setProvider( "digitalocean" );
+
+      final NodeCluster created = apiClient.createNodeCluster( create );
+
+      Assert.assertNotNull( created );
+      LOG.info( created.toString() );
+
+      // List
       final NodeClusters clusters = apiClient.getNodeClusters( 1 );
 
       Assert.assertNotNull( clusters );
@@ -121,37 +136,78 @@ public class TutumIntegrationTest {
       for( NodeCluster cluster : clusters.getObjects() ) {
          LOG.info( cluster.toString() );
       }
-   }
 
-   @Test
-   public void testNodeCluster() throws Exception {
-      final String clusterid = "f648b285-7ddd-4bf2-9ed2-26ee2c215db6";
+      // Get
+      final String clusterid = clusters.getObjects().get( 0 ).getUuid();
       final NodeCluster cluster = apiClient.getNodeCluster( clusterid );
 
       Assert.assertNotNull( cluster );
       LOG.info( cluster.toString() );
+
+      // Deploy
+      final NodeCluster deployed = apiClient.deployNodeCluster( created.getUuid() );
+
+      Assert.assertNotNull( deployed );
+      LOG.info( deployed.toString() );
+
+      // Update (After Deployed)
+      NodeCluster current = apiClient.getNodeCluster( deployed.getUuid() );
+      while( !current.isDeployed() ) {
+         LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getNodeCluster( deployed.getUuid() );
+      }
+      LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+
+      current.getTags().add( new Tag( "updated" ) );
+      apiClient.updateNodeCluster( current );
+
+      // Upgrade
+      current = apiClient.upgradeDockerOnNodeCluster( current.getUuid() );
+      LOG.info( "Cluster After Upgrade: {}", current );
+
+      // Terminate
+      current = apiClient.getNodeCluster( deployed.getUuid() );
+      while( !current.isDeployed() ) {
+         LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getNodeCluster( deployed.getUuid() );
+      }
+      LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+      current = apiClient.terminateNodeCluster( current.getUuid() );
+      LOG.info( "Cluster After Terminate: {}", current );
    }
 
    @Test
-   public void testCreateNodeCluster() throws Exception {
-      final NodeCluster cluster = new NodeCluster();
-      cluster.setName( "junit" );
-      cluster.setRegion( "/api/v1/region/digitalocean/nyc3/" );
-      cluster.setNodeType( "/api/v1/nodetype/digitalocean/512mb/" );
-      cluster.setTargetNumNodes( 1 );
-      cluster.setProvider( "digitalocean" );
+   public void testTemp() throws Exception {
+      final String uuid = "36e31f04-74f8-40fe-83e1-1e39fd243d5b";
 
-      final NodeCluster result = apiClient.createNodeCluster( cluster );
+      // Update (After Deployed)
+      NodeCluster current = apiClient.getNodeCluster( uuid );
+      while( !current.isDeployed() ) {
+         LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getNodeCluster( uuid );
+      }
+      LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
 
-      Assert.assertNotNull( result );
-      LOG.info( result.toString() );
+      current.getTags().add( new Tag( "updated" ) );
+      apiClient.updateNodeCluster( current );
+
+      // Upgrade
+      current = apiClient.upgradeDockerOnNodeCluster( current.getUuid() );
+      LOG.info( "Cluster After Upgrade: {}", current );
+
+      // Terminate
+      current = apiClient.getNodeCluster( uuid );
+      while( !current.isDeployed() ) {
+         LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getNodeCluster( uuid );
+      }
+      LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+      current = apiClient.terminateNodeCluster( current.getUuid() );
+      LOG.info( "Cluster After Terminate: {}", current );
    }
 
-   // @Test
-   public void testDeployNodeCluster() throws Exception {
-      final NodeCluster result = apiClient.deployNodeCluster( "22b7fc76-0c69-4703-9924-6e84e57b812e" );
-
-      Assert.assertNotNull( result );
-      LOG.info( result.toString() );
-   }
 }

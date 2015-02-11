@@ -1,17 +1,17 @@
 /*
  * The MIT License
- * 
+ *
  * Copyright (c) 2010-2014 Jeevanandam M. (myjeeva.com)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
  * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all copies or
  * substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
  * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
  * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
@@ -38,6 +38,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -74,27 +75,27 @@ import com.pennassurancesoftware.tutum.exception.TutumException;
  * Tutum API client wrapper methods Implementation
  */
 public class TutumClient implements Tutum {
-   private final Logger LOG = LoggerFactory.getLogger( TutumClient.class );
-
-   protected HttpClient httpClient;
-
-   /** OAuth Authorization Token for Accessing Tutum API */
-   protected String authToken;
-
-   /** Tutum API version. defaults to v1 from constructor */
-   protected String apiVersion;
-
-   /** Tutum API Host is <code>dashboard.tutum.co</code> */
-   protected String apiHost = "dashboard.tutum.co";
-
    /** Gson Parser instance for deserialize */
    private Gson deserialize;
+
+   /** JSON Parser instance */
+   private JsonParser jsonParser;
+
+   private final Logger LOG = LoggerFactory.getLogger( TutumClient.class );
 
    /** Gson Parser instance for serialize */
    private Gson serialize;
 
-   /** JSON Parser instance */
-   private JsonParser jsonParser;
+   /** Tutum API Host is <code>dashboard.tutum.co</code> */
+   protected String apiHost = "dashboard.tutum.co";
+
+   /** Tutum API version. defaults to v1 from constructor */
+   protected String apiVersion;
+
+   /** OAuth Authorization Token for Accessing Tutum API */
+   protected String authToken;
+
+   protected HttpClient httpClient;
 
    public TutumClient( String authToken ) {
       this( "v1", authToken );
@@ -102,7 +103,7 @@ public class TutumClient implements Tutum {
 
    /**
     * Tutum Client Constructor
-    * 
+    *
     * @param apiVersion a {@link String} object
     * @param authToken a {@link String} object
     */
@@ -112,7 +113,7 @@ public class TutumClient implements Tutum {
 
    /**
     * Tutum Client Constructor
-    * 
+    *
     * @param apiVersion a {@link String} object
     * @param authToken a {@link String} object
     * @param httpClient a {@link HttpClient} object
@@ -128,32 +129,36 @@ public class TutumClient implements Tutum {
       initialize();
    }
 
-   /**
-    * @return the httpClient
-    */
-   public HttpClient getHttpClient() {
-      return httpClient;
+   @Override
+   public NodeCluster createNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
+      if( null == cluster
+            || null == cluster.getName()
+            || null == cluster.getRegion()
+            || null == cluster.getNodeType() ) {
+         throw new IllegalArgumentException(
+               "Missing required parameters [Name, Region, Node Type] for create node cluster." );
+      }
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.CREATE_NODECLUSTER, cluster ) ).getData();
    }
 
-   /**
-    * @param httpClient the httpClient to set
-    */
-   public void setHttpClient( HttpClient httpClient ) {
-      this.httpClient = httpClient;
+   @Override
+   public NodeCluster deployNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.DEPLOY_NODECLUSTER, params ) ).getData();
    }
 
-   /**
-    * @return the authToken
-    */
-   public String getAuthToken() {
-      return authToken;
+   @Override
+   public Action getAction( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Action )perform( new ApiRequest( ApiAction.GET_ACTION, params ) ).getData();
    }
 
-   /**
-    * @param authToken the authToken to set
-    */
-   public void setAuthToken( String authToken ) {
-      this.authToken = authToken;
+   @Override
+   public Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, pageNo ) ).getData();
    }
 
    /**
@@ -164,10 +169,10 @@ public class TutumClient implements Tutum {
    }
 
    /**
-    * @param apiVersion the apiVersion to set
+    * @return the authToken
     */
-   public void setApiVersion( String apiVersion ) {
-      this.apiVersion = apiVersion;
+   public String getAuthToken() {
+      return authToken;
    }
 
    // =======================================
@@ -713,44 +718,204 @@ public class TutumClient implements Tutum {
    //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_KEY, params ) ).getData();
    //   }
 
-   private ApiResponse perform( ApiRequest request ) throws TutumException,
-         RequestUnsuccessfulException {
+   /**
+    * @return the httpClient
+    */
+   public HttpClient getHttpClient() {
+      return httpClient;
+   }
 
-      URI uri = createUri( request );
-      String response = null;
+   @Override
+   public NodeCluster getNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.GET_NODECLUSTER, params ) ).getData();
+   }
 
-      if( RequestMethod.GET == request.getMethod() ) {
-         response = doGet( uri );
+   @Override
+   public NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, pageNo ) ).getData();
+   }
+
+   @Override
+   public NodeType getNodeType( String providerName, String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( providerName, "Missing required parameter - Provider Name." );
+      checkNullAndThrowError( name, "Missing required parameter - Node Type Name." );
+      final Object[] params = { providerName, name };
+      return ( NodeType )perform( new ApiRequest( ApiAction.GET_NODETYPE, params ) ).getData();
+   }
+
+   @Override
+   public NodeTypes getNodeTypes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, pageNo ) ).getData();
+   }
+
+   @Override
+   public Provider getProvider( String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( name, "Missing required parameter - Name." );
+      final Object[] params = { name };
+      return ( Provider )perform( new ApiRequest( ApiAction.GET_PROVIDER, params ) ).getData();
+   }
+
+   @Override
+   public Providers getProviders( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, pageNo ) ).getData();
+   }
+
+   @Override
+   public Region getRegion( String providerName, String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( providerName, "Missing required parameter - Provider Name." );
+      checkNullAndThrowError( name, "Missing required parameter - Region Name." );
+      final Object[] params = { providerName, name };
+      return ( Region )perform( new ApiRequest( ApiAction.GET_REGION, params ) ).getData();
+   }
+
+   @Override
+   public Regions getRegions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, pageNo ) ).getData();
+   }
+
+   /**
+    * @param apiVersion the apiVersion to set
+    */
+   public void setApiVersion( String apiVersion ) {
+      this.apiVersion = apiVersion;
+   }
+
+   /**
+    * @param authToken the authToken to set
+    */
+   public void setAuthToken( String authToken ) {
+      this.authToken = authToken;
+   }
+
+   /**
+    * @param httpClient the httpClient to set
+    */
+   public void setHttpClient( HttpClient httpClient ) {
+      this.httpClient = httpClient;
+   }
+
+   @Override
+   public NodeCluster terminateNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.TERMINATE_NODECLUSTER, params ) ).getData();
+   }
+
+   @Override
+   public NodeCluster updateNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( cluster.getUuid(), "Missing required parameter - UUID." );
+      final Object[] params = { cluster.getUuid() };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, params ) ).getData();
+   }
+
+   @Override
+   public NodeCluster upgradeDockerOnNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.UPGRADE_DOCKER_NODECLUSTER, params ) ).getData();
+   }
+
+   //   private String appendRateLimitValues( String response, HttpResponse httpResponse ) {
+   //      if( StringUtils.isEmpty( response ) ) {
+   //         return "";
+   //      }
+   //
+   //      String rateLimitData =
+   //            String.format( Constants.RATE_LIMIT_JSON_STRUCT, httpResponse.getFirstHeader( "RateLimit-Limit" )
+   //                  .getValue(), httpResponse.getFirstHeader( "RateLimit-Remaining" ).getValue(),
+   //                  getDateString( httpResponse.getFirstHeader( "RateLimit-Reset" ).getValue(), Constants.DATE_FORMAT ) );
+   //
+   //      return StringUtils.substringBeforeLast( response, "}" ) + ", " + rateLimitData + "}";
+   //   }
+
+   @SuppressWarnings("unused")
+   private void checkEmptyAndThrowError( String str, String msg ) {
+      if( StringUtils.isEmpty( str ) ) {
+         LOG.error( msg );
+         throw new IllegalArgumentException( msg );
       }
-      else if( RequestMethod.POST == request.getMethod() ) {
-         response = doPost( uri, createRequestData( request ) );
+   }
+
+   // =======================================
+   // Validation methods
+   // =======================================
+
+   //   @SuppressWarnings("unused")
+   //   private void validateDropletIdAndPageNo( Integer dropletId, Integer pageNo ) {
+   //      validateDropletId( dropletId );
+   //      validatePageNo( pageNo );
+   //   }
+
+   private void checkNullAndThrowError( Object val, String msg ) {
+      if( null == val ) {
+         LOG.error( msg );
+         throw new IllegalArgumentException( msg );
       }
-      else if( RequestMethod.PUT == request.getMethod() ) {
-         response = doPut( uri, createRequestData( request ) );
+   }
+
+   private String createPath( ApiRequest request ) {
+      String path = Constants.URL_PATH_SEPARATOR + "api" + Constants.URL_PATH_SEPARATOR + apiVersion + request.getApiAction().getPath();
+      return ( null == request.getParams() ? path : String.format( path, request.getParams() ) );
+   }
+
+   private StringEntity createRequestData( ApiRequest request ) {
+      StringEntity data = null;
+      if( null != request.getData() ) {
+         final String inputData = serialize.toJson( request.getData() );
+         data = new StringEntity( inputData, ContentType.create( Constants.JSON_CONTENT_TYPE ) );
       }
-      else if( RequestMethod.DELETE == request.getMethod() ) {
-         response = doDelete( uri );
+      return data;
+   }
+
+   private URI createUri( ApiRequest request ) {
+      URIBuilder ub = new URIBuilder();
+      ub.setScheme( Constants.HTTPS_SCHEME );
+      ub.setHost( apiHost );
+      ub.setPath( createPath( request ) );
+
+      if( null != request.getPageNo() ) {
+         ub.setParameter( Constants.PARAM_PAGE_NO, request.getPageNo().toString() );
       }
 
-      final ApiResponse apiResponse = new ApiResponse( request.getApiAction(), true );
-
+      URI uri = null;
       try {
-         apiResponse.setData( deserialize.fromJson( response, request.getClazz() ) );
+         uri = ub.build();
       }
-      catch( JsonSyntaxException jse ) {
-         LOG.error( "Error occurred while parsing response", jse );
-         apiResponse.setRequestSuccess( false );
+      catch( URISyntaxException use ) {
+         LOG.error( use.getMessage(), use );
       }
 
-      LOG.debug( "API Response:: " + apiResponse.toString() );
+      return uri;
+   }
 
-      return apiResponse;
+   private String doDelete( URI uri ) throws TutumException, RequestUnsuccessfulException {
+      HttpDelete delete = new HttpDelete( uri );
+      delete.setHeaders( getRequestHeaders() );
+      delete.setHeader( HttpHeaders.CONTENT_TYPE, Constants.FORM_URLENCODED_CONTENT_TYPE );
+      return executeHttpRequest( delete );
    }
 
    private String doGet( URI uri ) throws TutumException, RequestUnsuccessfulException {
       HttpGet get = new HttpGet( uri );
       get.setHeaders( getRequestHeaders() );
       return executeHttpRequest( get );
+   }
+
+   private String doPatch( URI uri, StringEntity entity ) throws TutumException, RequestUnsuccessfulException {
+      HttpPatch patch = new HttpPatch( uri );
+      patch.setHeaders( getRequestHeaders() );
+
+      if( null != entity ) {
+         patch.setEntity( entity );
+      }
+
+      return executeHttpRequest( patch );
    }
 
    private String doPost( URI uri, StringEntity entity ) throws TutumException, RequestUnsuccessfulException {
@@ -765,30 +930,6 @@ public class TutumClient implements Tutum {
       return executeHttpRequest( post );
    }
 
-   private String readString( StringEntity entity ) {
-      try {
-         return readString( entity.getContent() );
-      }
-      catch( Exception exception ) {
-         throw new RuntimeException( "Error reading String Entity", exception );
-      }
-   }
-
-   private String readString( InputStream inputStream ) {
-      try {
-         final ByteArrayOutputStream into = new ByteArrayOutputStream();
-         byte[] buf = new byte[4096];
-         for( int n; 0 < ( n = inputStream.read( buf ) ); ) {
-            into.write( buf, 0, n );
-         }
-         into.close();
-         return new String( into.toByteArray(), "UTF-8" ); // Or whatever encoding
-      }
-      catch( Exception exception ) {
-         throw new RuntimeException( "Error reading InputStream", exception );
-      }
-   }
-
    private String doPut( URI uri, StringEntity entity ) throws TutumException, RequestUnsuccessfulException {
       HttpPut put = new HttpPut( uri );
       put.setHeaders( getRequestHeaders() );
@@ -798,33 +939,6 @@ public class TutumClient implements Tutum {
       }
 
       return executeHttpRequest( put );
-   }
-
-   private String doDelete( URI uri ) throws TutumException, RequestUnsuccessfulException {
-      HttpDelete delete = new HttpDelete( uri );
-      delete.setHeaders( getRequestHeaders() );
-      delete.setHeader( HttpHeaders.CONTENT_TYPE, Constants.FORM_URLENCODED_CONTENT_TYPE );
-      return executeHttpRequest( delete );
-   }
-
-   private String executeHttpRequest( HttpRequestBase request ) throws TutumException, RequestUnsuccessfulException {
-      String response = "";
-      try {
-         final HttpResponse httpResponse = httpClient.execute( request );
-         LOG.debug( "HTTP Response Object:: " + httpResponse );
-         response = evaluateResponse( httpResponse );
-         LOG.debug( "Parsed Response:: " + response );
-      }
-      catch( ClientProtocolException cpe ) {
-         throw new RequestUnsuccessfulException( cpe.getMessage(), cpe );
-      }
-      catch( IOException ioe ) {
-         throw new RequestUnsuccessfulException( ioe.getMessage(), ioe );
-      }
-      finally {
-         request.releaseConnection();
-      }
-      return response;
    }
 
    private String evaluateResponse( HttpResponse httpResponse ) throws TutumException {
@@ -856,6 +970,45 @@ public class TutumClient implements Tutum {
       return response;
    }
 
+   private String executeHttpRequest( HttpRequestBase request ) throws TutumException, RequestUnsuccessfulException {
+      String response = "";
+      try {
+         final HttpResponse httpResponse = httpClient.execute( request );
+         LOG.debug( "HTTP Response Object:: " + httpResponse );
+         response = evaluateResponse( httpResponse );
+         LOG.debug( "Parsed Response:: " + response );
+      }
+      catch( ClientProtocolException cpe ) {
+         throw new RequestUnsuccessfulException( cpe.getMessage(), cpe );
+      }
+      catch( IOException ioe ) {
+         throw new RequestUnsuccessfulException( ioe.getMessage(), ioe );
+      }
+      finally {
+         request.releaseConnection();
+      }
+      return response;
+   }
+
+   @SuppressWarnings("unused")
+   private String getDateString( String epochString, String dateFormat ) {
+      long epoch = Long.parseLong( epochString );
+      Date expiry = new Date( epoch * 1000 );
+
+      SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
+      String dateString = formatter.format( expiry );
+      LOG.debug( dateString );
+      return dateString;
+   }
+
+   private Header[] getRequestHeaders() {
+      Header[] headers =
+      { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
+            new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
+            new BasicHeader( "Authorization", "ApiKey " + authToken ) };
+      return headers;
+   }
+
    private String httpResponseToString( HttpResponse httpResponse ) {
       String response = "";
       if( null != httpResponse.getEntity() ) {
@@ -872,102 +1025,6 @@ public class TutumClient implements Tutum {
       return response;
    }
 
-   private URI createUri( ApiRequest request ) {
-      URIBuilder ub = new URIBuilder();
-      ub.setScheme( Constants.HTTPS_SCHEME );
-      ub.setHost( apiHost );
-      ub.setPath( createPath( request ) );
-
-      if( null != request.getPageNo() ) {
-         ub.setParameter( Constants.PARAM_PAGE_NO, request.getPageNo().toString() );
-      }
-
-      URI uri = null;
-      try {
-         uri = ub.build();
-      }
-      catch( URISyntaxException use ) {
-         LOG.error( use.getMessage(), use );
-      }
-
-      return uri;
-   }
-
-   private Header[] getRequestHeaders() {
-      Header[] headers =
-      { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
-            new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
-            new BasicHeader( "Authorization", "ApiKey " + authToken ) };
-      return headers;
-   }
-
-   private String createPath( ApiRequest request ) {
-      String path = Constants.URL_PATH_SEPARATOR + "api" + Constants.URL_PATH_SEPARATOR + apiVersion + request.getApiAction().getPath();
-      return ( null == request.getParams() ? path : String.format( path, request.getParams() ) );
-   }
-
-   private StringEntity createRequestData( ApiRequest request ) {
-      StringEntity data = null;
-      if( null != request.getData() ) {
-         final String inputData = serialize.toJson( request.getData() );
-         data = new StringEntity( inputData, ContentType.create( Constants.JSON_CONTENT_TYPE ) );
-      }
-      return data;
-   }
-
-   //   private String appendRateLimitValues( String response, HttpResponse httpResponse ) {
-   //      if( StringUtils.isEmpty( response ) ) {
-   //         return "";
-   //      }
-   //
-   //      String rateLimitData =
-   //            String.format( Constants.RATE_LIMIT_JSON_STRUCT, httpResponse.getFirstHeader( "RateLimit-Limit" )
-   //                  .getValue(), httpResponse.getFirstHeader( "RateLimit-Remaining" ).getValue(),
-   //                  getDateString( httpResponse.getFirstHeader( "RateLimit-Reset" ).getValue(), Constants.DATE_FORMAT ) );
-   //
-   //      return StringUtils.substringBeforeLast( response, "}" ) + ", " + rateLimitData + "}";
-   //   }
-
-   @SuppressWarnings("unused")
-   private String getDateString( String epochString, String dateFormat ) {
-      long epoch = Long.parseLong( epochString );
-      Date expiry = new Date( epoch * 1000 );
-
-      SimpleDateFormat formatter = new SimpleDateFormat( dateFormat );
-      String dateString = formatter.format( expiry );
-      LOG.debug( dateString );
-      return dateString;
-   }
-
-   // =======================================
-   // Validation methods
-   // =======================================
-
-   //   @SuppressWarnings("unused")
-   //   private void validateDropletIdAndPageNo( Integer dropletId, Integer pageNo ) {
-   //      validateDropletId( dropletId );
-   //      validatePageNo( pageNo );
-   //   }
-
-   private void validatePageNo( Integer pageNo ) {
-      checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
-   }
-
-   private void checkNullAndThrowError( Object val, String msg ) {
-      if( null == val ) {
-         LOG.error( msg );
-         throw new IllegalArgumentException( msg );
-      }
-   }
-
-   @SuppressWarnings("unused")
-   private void checkEmptyAndThrowError( String str, String msg ) {
-      if( StringUtils.isEmpty( str ) ) {
-         LOG.error( msg );
-         throw new IllegalArgumentException( msg );
-      }
-   }
-
    private void initialize() {
       this.deserialize = new GsonBuilder().setDateFormat( Constants.DATE_FORMAT ).create();
 
@@ -980,90 +1037,69 @@ public class TutumClient implements Tutum {
       }
    }
 
-   @Override
-   public Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, pageNo ) ).getData();
-   }
+   private ApiResponse perform( ApiRequest request ) throws TutumException,
+         RequestUnsuccessfulException {
 
-   @Override
-   public Action getAction( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Action )perform( new ApiRequest( ApiAction.GET_ACTION, params ) ).getData();
-   }
+      URI uri = createUri( request );
+      String response = null;
 
-   @Override
-   public Providers getProviders( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, pageNo ) ).getData();
-   }
-
-   @Override
-   public Provider getProvider( String name ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( name, "Missing required parameter - Name." );
-      final Object[] params = { name };
-      return ( Provider )perform( new ApiRequest( ApiAction.GET_PROVIDER, params ) ).getData();
-   }
-
-   @Override
-   public Regions getRegions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, pageNo ) ).getData();
-   }
-
-   @Override
-   public Region getRegion( String providerName, String name ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( providerName, "Missing required parameter - Provider Name." );
-      checkNullAndThrowError( name, "Missing required parameter - Region Name." );
-      final Object[] params = { providerName, name };
-      return ( Region )perform( new ApiRequest( ApiAction.GET_REGION, params ) ).getData();
-   }
-
-   @Override
-   public NodeTypes getNodeTypes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, pageNo ) ).getData();
-   }
-
-   @Override
-   public NodeType getNodeType( String providerName, String name ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( providerName, "Missing required parameter - Provider Name." );
-      checkNullAndThrowError( name, "Missing required parameter - Node Type Name." );
-      final Object[] params = { providerName, name };
-      return ( NodeType )perform( new ApiRequest( ApiAction.GET_NODETYPE, params ) ).getData();
-   }
-
-   @Override
-   public NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, pageNo ) ).getData();
-   }
-
-   @Override
-   public NodeCluster getNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( NodeCluster )perform( new ApiRequest( ApiAction.GET_NODECLUSTER, params ) ).getData();
-   }
-
-   @Override
-   public NodeCluster createNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
-      if( null == cluster
-            || null == cluster.getName()
-            || null == cluster.getRegion()
-            || null == cluster.getNodeType() ) {
-         throw new IllegalArgumentException(
-               "Missing required parameters [Name, Region, Node Type] for create node cluster." );
+      if( RequestMethod.GET == request.getMethod() ) {
+         response = doGet( uri );
       }
-      return ( NodeCluster )perform( new ApiRequest( ApiAction.CREATE_NODECLUSTER, cluster ) ).getData();
+      else if( RequestMethod.POST == request.getMethod() ) {
+         response = doPost( uri, createRequestData( request ) );
+      }
+      else if( RequestMethod.PUT == request.getMethod() ) {
+         response = doPut( uri, createRequestData( request ) );
+      }
+      else if( RequestMethod.PATCH == request.getMethod() ) {
+         response = doPatch( uri, createRequestData( request ) );
+      }
+      else if( RequestMethod.DELETE == request.getMethod() ) {
+         response = doDelete( uri );
+      }
+
+      final ApiResponse apiResponse = new ApiResponse( request.getApiAction(), true );
+
+      try {
+         apiResponse.setData( deserialize.fromJson( response, request.getClazz() ) );
+      }
+      catch( JsonSyntaxException jse ) {
+         LOG.error( "Error occurred while parsing response: {}", response, jse );
+         apiResponse.setRequestSuccess( false );
+      }
+
+      LOG.debug( "API Response:: " + apiResponse.toString() );
+
+      return apiResponse;
    }
 
-   @Override
-   public NodeCluster deployNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( NodeCluster )perform( new ApiRequest( ApiAction.DEPLOY_NODECLUSTER, params ) ).getData();
+   private String readString( InputStream inputStream ) {
+      try {
+         final ByteArrayOutputStream into = new ByteArrayOutputStream();
+         byte[] buf = new byte[4096];
+         for( int n; 0 < ( n = inputStream.read( buf ) ); ) {
+            into.write( buf, 0, n );
+         }
+         into.close();
+         return new String( into.toByteArray(), "UTF-8" ); // Or whatever encoding
+      }
+      catch( Exception exception ) {
+         throw new RuntimeException( "Error reading InputStream", exception );
+      }
+   }
+
+   private String readString( StringEntity entity ) {
+      try {
+         return readString( entity.getContent() );
+      }
+      catch( Exception exception ) {
+         throw new RuntimeException( "Error reading String Entity", exception );
+      }
+   }
+
+   private void validatePageNo( Integer pageNo ) {
+      checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
    }
 
 }

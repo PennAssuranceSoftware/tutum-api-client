@@ -48,6 +48,9 @@ public enum ApiAction {
    GET_NODECLUSTER("/nodecluster/%s", RequestMethod.GET, NodeCluster.class),
    CREATE_NODECLUSTER("/nodecluster/", RequestMethod.POST, NodeCluster.class),
    DEPLOY_NODECLUSTER("/nodecluster/%s/deploy/", RequestMethod.POST, NodeCluster.class),
+   UPDATE_NODECLUSTER("/nodecluster/%s/", RequestMethod.PATCH, NodeCluster.class),
+   UPGRADE_DOCKER_NODECLUSTER("/nodecluster/%s/docker-upgrade/", RequestMethod.POST, NodeCluster.class),
+   TERMINATE_NODECLUSTER("/nodecluster/%s/", RequestMethod.DELETE, NodeCluster.class),
 
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),

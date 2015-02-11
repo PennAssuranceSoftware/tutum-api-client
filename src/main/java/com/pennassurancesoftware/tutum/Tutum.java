@@ -251,6 +251,42 @@ public interface Tutum {
     */
    NodeCluster deployNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
+   /**
+    * Updates the node cluster details and applies the changes automatically.
+    * 
+    * @param cluster Cluster object with the UUID of the cluster to update set
+    * @return {@link NodeCluster}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeCluster updateNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Upgrades the Docker Daemon of all the nodes in the cluster.
+    * 
+    * @param uuid the id of the node cluster
+    * @return {@link NodeCluster}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeCluster upgradeDockerOnNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Terminates all the nodes in a node cluster and the node cluster itself. This is not reversible.
+    * 
+    * @param uuid the id of the node cluster
+    * @return {@link NodeCluster}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   NodeCluster terminateNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
    //  /**
    //   * Method returns all available kernels for given droplet ID
    //   * 

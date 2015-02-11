@@ -1,12 +1,16 @@
 package com.pennassurancesoftware.tutum.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.pennassurancesoftware.tutum.type.NodeClusterState;
+import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 
 public class NodeCluster implements Serializable {
    private static final long serialVersionUID = -2202527200127364851L;
@@ -31,100 +35,118 @@ public class NodeCluster implements Serializable {
    private String resourceUri;
    private String state;
    @Expose
+   private List<Tag> tags = new ArrayList<Tag>();
+   @Expose
    @SerializedName("target_num_nodes")
    private Integer targetNumNodes;
    private String uuid;
 
-   public String getProvider() {
-      return provider;
-   }
-
-   public void setProvider( String provider ) {
-      this.provider = provider;
-   }
-
    public Integer getCurrentNumNodes() {
       return currentNumNodes;
-   }
-
-   public void setCurrentNumNodes( Integer currentNumNodes ) {
-      this.currentNumNodes = currentNumNodes;
    }
 
    public Date getDeployedDatetime() {
       return deployedDatetime;
    }
 
-   public void setDeployedDatetime( Date deployedDatetime ) {
-      this.deployedDatetime = deployedDatetime;
-   }
-
    public Date getDestroyedDatetime() {
       return destroyedDatetime;
-   }
-
-   public void setDestroyedDatetime( Date destroyedDatetime ) {
-      this.destroyedDatetime = destroyedDatetime;
    }
 
    public Integer getDisk() {
       return disk;
    }
 
-   public void setDisk( Integer disk ) {
-      this.disk = disk;
-   }
-
    public String getName() {
       return name;
-   }
-
-   public void setName( String name ) {
-      this.name = name;
    }
 
    public String getNodeType() {
       return nodeType;
    }
 
-   public void setNodeType( String nodeType ) {
-      this.nodeType = nodeType;
+   public String getProvider() {
+      return provider;
    }
 
    public String getRegion() {
       return region;
    }
 
-   public void setRegion( String region ) {
-      this.region = region;
-   }
-
    public String getResourceUri() {
       return resourceUri;
    }
 
-   public void setResourceUri( String resourceUri ) {
-      this.resourceUri = resourceUri;
+   public NodeClusterState getState() {
+      return EnumerationUtils.lookup( NodeClusterState.class, state );
    }
 
-   public String getState() {
-      return state;
-   }
-
-   public void setState( String state ) {
-      this.state = state;
+   public List<Tag> getTags() {
+      return tags;
    }
 
    public Integer getTargetNumNodes() {
       return targetNumNodes;
    }
 
-   public void setTargetNumNodes( Integer targetNumNodes ) {
-      this.targetNumNodes = targetNumNodes;
-   }
-
    public String getUuid() {
       return uuid;
+   }
+
+   public boolean isDeployed() {
+      return NodeClusterState.Deployed.equals( getState() );
+   }
+
+   public void setCurrentNumNodes( Integer currentNumNodes ) {
+      this.currentNumNodes = currentNumNodes;
+   }
+
+   public void setDeployedDatetime( Date deployedDatetime ) {
+      this.deployedDatetime = deployedDatetime;
+   }
+
+   public void setDestroyedDatetime( Date destroyedDatetime ) {
+      this.destroyedDatetime = destroyedDatetime;
+   }
+
+   public void setDisk( Integer disk ) {
+      this.disk = disk;
+   }
+
+   public void setName( String name ) {
+      this.name = name;
+   }
+
+   public void setNodeType( String nodeType ) {
+      this.nodeType = nodeType;
+   }
+
+   public void setProvider( String provider ) {
+      this.provider = provider;
+   }
+
+   public void setRegion( String region ) {
+      this.region = region;
+   }
+
+   public void setResourceUri( String resourceUri ) {
+      this.resourceUri = resourceUri;
+   }
+
+   public void setState( NodeClusterState state ) {
+      setState( state.value() );
+   }
+
+   public void setState( String state ) {
+      this.state = state;
+   }
+
+   public void setTags( List<Tag> tags ) {
+      this.tags = tags;
+   }
+
+   public void setTargetNumNodes( Integer targetNumNodes ) {
+      this.targetNumNodes = targetNumNodes;
    }
 
    public void setUuid( String uuid ) {
