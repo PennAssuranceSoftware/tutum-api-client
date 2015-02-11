@@ -55,7 +55,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.pennassurancesoftware.tutum.Tutum;
+import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Provider;
+import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -729,9 +732,9 @@ public class TutumClient implements Tutum {
          }
          else {
             JsonObject rootObject = jsonParser.parse( response ).getAsJsonObject();
-            JsonObject elementObject = rootObject.get( request.getElementName() ).getAsJsonObject();
-            elementObject.add( Constants.RATE_LIMIT_ELEMENT_NAME, rootObject.get( Constants.RATE_LIMIT_ELEMENT_NAME ) );
-            apiResponse.setData( deserialize.fromJson( elementObject, request.getClazz() ) );
+            // JsonObject elementObject = rootObject.get( request.getElementName() ).getAsJsonObject();
+            // elementObject.add( Constants.RATE_LIMIT_ELEMENT_NAME, rootObject.get( Constants.RATE_LIMIT_ELEMENT_NAME ) );
+            apiResponse.setData( deserialize.fromJson( rootObject, request.getClazz() ) );
          }
       }
       catch( JsonSyntaxException jse ) {
@@ -814,7 +817,7 @@ public class TutumClient implements Tutum {
          response = String.format( Constants.NO_CONTENT_JSON_STRUCT, statusCode );
       }
 
-      if( statusCode >= 400 && statusCode < 510 ) {
+      if( ( statusCode >= 400 && statusCode < 510 ) ) {
          String jsonStr = httpResponseToString( httpResponse );
          LOG.debug( "JSON Response: " + jsonStr );
 
@@ -919,22 +922,18 @@ public class TutumClient implements Tutum {
    // Validation methods
    // =======================================
 
-   @SuppressWarnings("unused")
-   private void validateDropletIdAndPageNo( Integer dropletId, Integer pageNo ) {
-      validateDropletId( dropletId );
-      validatePageNo( pageNo );
-   }
-
-   private void validateDropletId( Integer dropletId ) {
-      checkNullAndThrowError( dropletId, "Missing required parameter - dropletId." );
-   }
+   //   @SuppressWarnings("unused")
+   //   private void validateDropletIdAndPageNo( Integer dropletId, Integer pageNo ) {
+   //      validateDropletId( dropletId );
+   //      validatePageNo( pageNo );
+   //   }
 
    private void validatePageNo( Integer pageNo ) {
       checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
    }
 
-   private void checkNullAndThrowError( Integer integer, String msg ) {
-      if( null == integer ) {
+   private void checkNullAndThrowError( Object val, String msg ) {
+      if( null == val ) {
          LOG.error( msg );
          throw new IllegalArgumentException( msg );
       }
@@ -966,5 +965,25 @@ public class TutumClient implements Tutum {
    public Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
       return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, pageNo ) ).getData();
+   }
+
+   @Override
+   public Action getAction( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Action )perform( new ApiRequest( ApiAction.GET_ACTION, params ) ).getData();
+   }
+
+   @Override
+   public Providers getProviders( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, pageNo ) ).getData();
+   }
+
+   @Override
+   public Provider getProvider( String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( name, "Missing required parameter - Name." );
+      final Object[] params = { name };
+      return ( Provider )perform( new ApiRequest( ApiAction.GET_PROVIDER, params ) ).getData();
    }
 }

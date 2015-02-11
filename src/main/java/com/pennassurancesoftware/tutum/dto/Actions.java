@@ -20,18 +20,11 @@
  */
 package com.pennassurancesoftware.tutum.dto;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 /**
  * Represents Actions
  * 
- * @since v2.0
+ * @since v1.0
  */
 public class Actions extends Base<Action> {
    private static final long serialVersionUID = 8034193005189329161L;
-
-   @Override
-   public String toString() {
-      return ReflectionToStringBuilder.toString( this );
-   }
 }

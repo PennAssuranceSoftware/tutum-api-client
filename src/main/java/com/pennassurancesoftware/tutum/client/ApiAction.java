@@ -20,15 +20,21 @@
  */
 package com.pennassurancesoftware.tutum.client;
 
+import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Provider;
+import com.pennassurancesoftware.tutum.dto.Providers;
 
 /**
  * Enumeration of Tutum RESTful resource information.
  */
 public enum ApiAction {
 
-   // Droplet
    ACTIONS("/action", "actions", RequestMethod.GET, Actions.class),
+   GET_ACTION("/action/%s", "action", RequestMethod.GET, Action.class),
+   PROVIDERS("/provider", "providers", RequestMethod.GET, Providers.class),
+   GET_PROVIDER("/provider/%s", "action", RequestMethod.GET, Provider.class),
+
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),
    //  GET_DROPLET_BACKUPS("/droplets/%s/backups", "backups", RequestMethod.GET, Backups.class),  

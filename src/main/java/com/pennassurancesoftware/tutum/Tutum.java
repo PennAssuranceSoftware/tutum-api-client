@@ -20,7 +20,10 @@
  */
 package com.pennassurancesoftware.tutum;
 
+import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Provider;
+import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -81,10 +84,6 @@ import com.pennassurancesoftware.tutum.exception.TutumException;
  */
 public interface Tutum {
 
-   //  // ===========================================
-   //  // Droplets methods
-   //  // ===========================================
-   //
    /**
     * Lists all actions in chronological order. Returns a list of Action objects.
     * 
@@ -93,9 +92,45 @@ public interface Tutum {
     * @throws TutumException
     * @throws RequestUnsuccessfulException
     * 
-    * @since v2.0
+    * @since v1.0
     **/
    Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given action ID
+    * 
+    * @param uuid the id of the action
+    * @return {@link Action}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   Action getAction( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all supported cloud providers. Returns a list of Provider objects.
+    * 
+    * @param pageNo for pagination
+    * @return {@link Providers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    **/
+   Providers getProviders( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given provider name
+    * 
+    * @param name Name of the provider
+    * @return {@link Provider}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    */
+   Provider getProvider( String name ) throws TutumException, RequestUnsuccessfulException;
 
    //  /**
    //   * Method returns all available kernels for given droplet ID
