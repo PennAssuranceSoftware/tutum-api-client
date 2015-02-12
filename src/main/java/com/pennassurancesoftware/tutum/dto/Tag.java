@@ -1,5 +1,7 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -35,6 +37,11 @@ public class Tag {
 
    public void setResourceUri( String resourceUri ) {
       this.resourceUri = resourceUri;
+   }
+   
+   @Override
+   public String toString() {
+      return ReflectionToStringBuilder.toString( this );
    }
 
 }

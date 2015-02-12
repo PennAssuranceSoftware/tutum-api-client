@@ -22,10 +22,12 @@ package com.pennassurancesoftware.tutum.client;
 
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusters;
 import com.pennassurancesoftware.tutum.dto.NodeType;
 import com.pennassurancesoftware.tutum.dto.NodeTypes;
+import com.pennassurancesoftware.tutum.dto.Nodes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
@@ -51,7 +53,15 @@ public enum ApiAction {
    UPDATE_NODECLUSTER("/nodecluster/%s/", RequestMethod.PATCH, NodeCluster.class),
    UPGRADE_DOCKER_NODECLUSTER("/nodecluster/%s/docker-upgrade/", RequestMethod.POST, NodeCluster.class),
    TERMINATE_NODECLUSTER("/nodecluster/%s/", RequestMethod.DELETE, NodeCluster.class),
+   NODES("/node", RequestMethod.GET, Nodes.class),
+   GET_NODE("/node/%s", RequestMethod.GET, Node.class),
+   DEPLOY_NODE("/node/%s/deploy/", RequestMethod.POST, Node.class),
+   UPDATE_NODE("/node/%s/", RequestMethod.PATCH, Node.class),
+   UPGRADE_DOCKER_NODE("/node/%s/docker-upgrade/", RequestMethod.POST, Node.class),
+   TERMINATE_NODE("/node/%s/", RequestMethod.DELETE, Node.class),
 
+   
+   
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),
    //  GET_DROPLET_BACKUPS("/droplets/%s/backups", "backups", RequestMethod.GET, Backups.class),  

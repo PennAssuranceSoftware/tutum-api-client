@@ -9,21 +9,25 @@ import org.slf4j.LoggerFactory;
 import com.pennassurancesoftware.tutum.client.TutumClient;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusters;
 import com.pennassurancesoftware.tutum.dto.NodeType;
 import com.pennassurancesoftware.tutum.dto.NodeTypes;
+import com.pennassurancesoftware.tutum.dto.Nodes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Tag;
+import com.pennassurancesoftware.tutum.type.NodeClusterState;
+import com.pennassurancesoftware.tutum.util.IdUtils;
 
 public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
+   private Tutum apiClient = new TutumClient( "" );
 
    @Test
    public void testActions() throws Exception {
@@ -179,35 +183,45 @@ public class TutumIntegrationTest {
    }
 
    @Test
-   public void testTemp() throws Exception {
-      final String uuid = "36e31f04-74f8-40fe-83e1-1e39fd243d5b";
+   public void testNodes() throws Exception {
+      final String clusterName = "cluster-" + IdUtils.smallRandom();
+      // final String nodeName = "node-" + IdUtils.smallRandom();
 
-      // Update (After Deployed)
-      NodeCluster current = apiClient.getNodeCluster( uuid );
+      // Create Cluster
+      final NodeCluster create = new NodeCluster();
+      create.setName( clusterName );
+      create.setRegion( "/api/v1/region/digitalocean/nyc3/" );
+      create.setNodeType( "/api/v1/nodetype/digitalocean/512mb/" );
+      create.setTargetNumNodes( 1 );
+      create.setProvider( "digitalocean" );
+
+      final NodeCluster created = apiClient.createNodeCluster( create );
+
+      Assert.assertNotNull( created );
+      LOG.info( created.toString() );
+
+      // Deploy
+      final NodeCluster deployed = apiClient.deployNodeCluster( created.getUuid() );
+      NodeCluster current = apiClient.getNodeCluster( deployed.getUuid() );
       while( !current.isDeployed() ) {
          LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
+         LOG.info( "Cluster: {}", current );
          Thread.sleep( 2000 );
-         current = apiClient.getNodeCluster( uuid );
+         current = apiClient.getNodeCluster( deployed.getUuid() );
+         if( NodeClusterState.Init.equals( current.getState() ) ) {
+            apiClient.deployNodeCluster( deployed.getUuid() );
+         }
       }
       LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
 
-      current.getTags().add( new Tag( "updated" ) );
-      apiClient.updateNodeCluster( current );
+      // List Nodes
+      final Nodes nodes = apiClient.getNodes( 1 );
 
-      // Upgrade
-      current = apiClient.upgradeDockerOnNodeCluster( current.getUuid() );
-      LOG.info( "Cluster After Upgrade: {}", current );
+      Assert.assertNotNull( nodes );
+      Assert.assertTrue( ( nodes.getObjects().size() > 0 ) );
 
-      // Terminate
-      current = apiClient.getNodeCluster( uuid );
-      while( !current.isDeployed() ) {
-         LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
-         Thread.sleep( 2000 );
-         current = apiClient.getNodeCluster( uuid );
+      for( Node node : nodes.getObjects() ) {
+         LOG.info( node.toString() );
       }
-      LOG.info( "Cluster: {} State: {}", current.getName(), current.getState().value() );
-      current = apiClient.terminateNodeCluster( current.getUuid() );
-      LOG.info( "Cluster After Terminate: {}", current );
    }
-
 }

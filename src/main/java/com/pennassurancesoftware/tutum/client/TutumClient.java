@@ -60,10 +60,12 @@ import com.google.gson.JsonSyntaxException;
 import com.pennassurancesoftware.tutum.Tutum;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusters;
 import com.pennassurancesoftware.tutum.dto.NodeType;
 import com.pennassurancesoftware.tutum.dto.NodeTypes;
+import com.pennassurancesoftware.tutum.dto.Nodes;
 import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
@@ -175,549 +177,6 @@ public class TutumClient implements Tutum {
       return authToken;
    }
 
-   // =======================================
-   // Droplet access/manipulation methods
-   // =======================================
-
-   //   @Override
-   //   public Droplets getAvailableDroplets( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validatePageNo( pageNo );
-   //
-   //      return ( Droplets )perform( new ApiRequest( ApiAction.AVAILABLE_DROPLETS, pageNo ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Kernels getAvailableKernels( Integer dropletId, Integer pageNo )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      validateDropletIdAndPageNo( dropletId, pageNo );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Kernels )perform( new ApiRequest( ApiAction.AVAILABLE_DROPLETS_KERNELS, params, pageNo ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Snapshots getAvailableSnapshots( Integer dropletId, Integer pageNo )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      validateDropletIdAndPageNo( dropletId, pageNo );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Snapshots )perform( new ApiRequest( ApiAction.GET_DROPLET_SNAPSHOTS, params, pageNo ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Backups getAvailableBackups( Integer dropletId, Integer pageNo )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      validateDropletIdAndPageNo( dropletId, pageNo );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Backups )perform( new ApiRequest( ApiAction.GET_DROPLET_BACKUPS, params, pageNo ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Droplet getDropletInfo( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Droplet )perform( new ApiRequest( ApiAction.GET_DROPLET_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Droplet createDroplet( Droplet droplet ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      if( null == droplet
-   //            || null == droplet.getName()
-   //            || null == droplet.getRegion()
-   //            || null == droplet.getSize()
-   //            || ( null == droplet.getImage() || ( null == droplet.getImage().getId() && null == droplet
-   //                  .getImage().getSlug() ) ) ) {
-   //         throw new IllegalArgumentException(
-   //               "Missing required parameters [Name, Region Slug, Size Slug, Image Id/Slug] for create droplet." );
-   //      }
-   //
-   //      return ( Droplet )perform( new ApiRequest( ApiAction.CREATE_DROPLET, droplet ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Delete deleteDroplet( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_DROPLET, params ) ).getData();
-   //   }
-   //
-   //   // Droplet action methods
-   //
-   //   @Override
-   //   public Action rebootDroplet( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.REBOOT_DROPLET, new DropletAction( ActionType.REBOOT ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Action powerCycleDroplet( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.POWER_CYCLE_DROPLET, new DropletAction( ActionType.POWER_CYCLE ),
-   //                  params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action shutdownDroplet( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.SHUTDOWN_DROPLET, new DropletAction( ActionType.SHUTDOWN ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Action powerOffDroplet( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.POWER_OFF_DROPLET, new DropletAction( ActionType.POWER_OFF ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Action powerOnDroplet( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.POWER_ON_DROPLET, new DropletAction( ActionType.POWER_ON ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Action resetDropletPassword( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.RESET_DROPLET_PASSWORD, new DropletAction(
-   //                  ActionType.PASSWORD_RESET ), params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action resizeDroplet( Integer dropletId, String size ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      DropletAction action = new DropletAction( ActionType.RESIZE );
-   //      action.setSize( size );
-   //      return ( Action )perform( new ApiRequest( ApiAction.RESIZE_DROPLET, action, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action takeDropletSnapshot( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.SNAPSHOT_DROPLET, new DropletAction( ActionType.SNAPSHOT ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Action takeDropletSnapshot( Integer dropletId, String snapshotName )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      DropletAction action = new DropletAction( ActionType.SNAPSHOT );
-   //      action.setName( snapshotName );
-   //      return ( Action )perform( new ApiRequest( ApiAction.SNAPSHOT_DROPLET, action, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action restoreDroplet( Integer dropletId, Integer imageId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      DropletAction action = new DropletAction( ActionType.RESTORE );
-   //      action.setImage( imageId );
-   //      return ( Action )perform( new ApiRequest( ApiAction.RESTORE_DROPLET, action, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action rebuildDroplet( Integer dropletId, Integer imageId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      DropletAction action = new DropletAction( ActionType.REBUILD );
-   //      action.setImage( imageId );
-   //      return ( Action )perform( new ApiRequest( ApiAction.REBUILD_DROPLET, action, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action disableDropletBackups( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.DISABLE_DROPLET_BACKUPS, new DropletAction(
-   //                  ActionType.DISABLE_BACKUPS ), params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action renameDroplet( Integer dropletId, String name ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      DropletAction action = new DropletAction( ActionType.RENAME );
-   //      action.setName( name );
-   //      return ( Action )perform( new ApiRequest( ApiAction.RENAME_DROPLET, action, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action changeDropletKernel( Integer dropletId, Integer kernelId )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      DropletAction action = new DropletAction( ActionType.CHANGE_KERNEL );
-   //      action.setKernel( kernelId );
-   //      return ( Action )perform( new ApiRequest( ApiAction.CHANGE_DROPLET_KERNEL, action, params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Action enableDropletIpv6( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.ENABLE_DROPLET_IPV6, new DropletAction( ActionType.ENABLE_IPV6 ),
-   //                  params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action enableDropletPrivateNetworking( Integer dropletId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validateDropletId( dropletId );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.ENABLE_DROPLET_PRIVATE_NETWORKING, new DropletAction(
-   //                  ActionType.ENABLE_PRIVATE_NETWORKING ), params ) ).getData();
-   //   }
-   //
-   //   // ==============================================
-   //   // Actions manipulation/access methods
-   //   // ==============================================
-   //
-   //   @Override
-   //   public Actions getAvailableActions( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validatePageNo( pageNo );
-   //      return ( Actions )perform( new ApiRequest( ApiAction.AVAILABLE_ACTIONS, pageNo ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action getActionInfo( Integer actionId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( actionId, "Missing required parameter - actionId" );
-   //
-   //      Object[] params = { actionId };
-   //      return ( Action )perform( new ApiRequest( ApiAction.GET_ACTION_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Actions getAvailableDropletActions( Integer dropletId, Integer pageNo )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      validateDropletIdAndPageNo( dropletId, pageNo );
-   //
-   //      Object[] params = { dropletId };
-   //      return ( Actions )perform( new ApiRequest( ApiAction.GET_DROPLET_ACTIONS, params, pageNo ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Actions getAvailableImageActions( Integer imageId, Integer pageNo )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      checkNullAndThrowError( imageId, "Missing required parameter - imageId." );
-   //      validatePageNo( pageNo );
-   //
-   //      Object[] params = { imageId };
-   //      return ( Actions )perform( new ApiRequest( ApiAction.GET_IMAGE_ACTIONS, params, pageNo ) ).getData();
-   //   }
-   //
-   //   // =======================================
-   //   // Images access/manipulation methods
-   //   // =======================================
-   //
-   //   @Override
-   //   public Images getAvailableImages( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validatePageNo( pageNo );
-   //      return ( Images )perform( new ApiRequest( ApiAction.AVAILABLE_IMAGES, pageNo ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Image getImageInfo( Integer imageId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( imageId, "Missing required parameter - imageId." );
-   //
-   //      Object[] params = { imageId };
-   //      return ( Image )perform( new ApiRequest( ApiAction.GET_IMAGE_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Image getImageInfo( String slug ) throws TutumException, RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( slug, "Missing required parameter - slug." );
-   //
-   //      Object[] params = { slug };
-   //      return ( Image )perform( new ApiRequest( ApiAction.GET_IMAGE_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Image updateImage( Image image ) throws TutumException, RequestUnsuccessfulException {
-   //      if( null == image || null == image.getName() ) {
-   //         throw new IllegalArgumentException( "Missing required parameter - image object." );
-   //      }
-   //
-   //      Object[] params = { image.getId() };
-   //      return ( Image )perform( new ApiRequest( ApiAction.UPDATE_IMAGE_INFO, image, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Delete deleteImage( Integer imageId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( imageId, "Missing required parameter - imageId." );
-   //
-   //      Object[] params = { imageId };
-   //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_IMAGE, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Action transferImage( Integer imageId, String regionSlug ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( imageId, "Missing required parameter - imageId." );
-   //      checkEmptyAndThrowError( regionSlug, "Missing required parameter - regionSlug." );
-   //
-   //      Object[] params = { imageId };
-   //      return ( Action )perform(
-   //            new ApiRequest( ApiAction.TRANSFER_IMAGE, new ImageAction( ActionType.TRANSFER, regionSlug ),
-   //                  params ) ).getData();
-   //   }
-   //
-   //   // =======================================
-   //   // Regions methods
-   //   // =======================================
-   //
-   //   @Override
-   //   public Regions getAvailableRegions( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validatePageNo( pageNo );
-   //      return ( Regions )perform( new ApiRequest( ApiAction.AVAILABLE_REGIONS, pageNo ) ).getData();
-   //   }
-   //
-   //   // =======================================
-   //   // Sizes methods
-   //   // =======================================
-   //
-   //   @Override
-   //   public Sizes getAvailableSizes( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      validatePageNo( pageNo );
-   //      return ( Sizes )perform( new ApiRequest( ApiAction.AVAILABLE_SIZES, pageNo ) ).getData();
-   //   }
-   //
-   //   // =======================================
-   //   // Domain methods
-   //   // =======================================
-   //
-   //   @Override
-   //   public Domains getAvailableDomains( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      return ( Domains )perform( new ApiRequest( ApiAction.AVAILABLE_DOMAINS, pageNo ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Domain getDomainInfo( String domainName ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //
-   //      Object[] params = { domainName };
-   //      return ( Domain )perform( new ApiRequest( ApiAction.GET_DOMAIN_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Domain createDomain( Domain domain ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domain.getName(), "Missing required parameter - domainName." );
-   //      checkEmptyAndThrowError( domain.getIpAddress(), "Missing required parameter - ipAddress." );
-   //
-   //      return ( Domain )perform( new ApiRequest( ApiAction.CREATE_DOMAIN, domain ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Delete deleteDomain( String domainName ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //
-   //      Object[] params = { domainName };
-   //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_DOMAIN, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public DomainRecords getDomainRecords( String domainName ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //
-   //      Object[] params = { domainName };
-   //      return ( DomainRecords )perform( new ApiRequest( ApiAction.GET_DOMAIN_RECORDS, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public DomainRecord getDomainRecordInfo( String domainName, Integer recordId )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //      checkNullAndThrowError( recordId, "Missing required parameter - recordId." );
-   //
-   //      Object[] params = { domainName, recordId };
-   //      return ( DomainRecord )perform( new ApiRequest( ApiAction.GET_DOMAIN_RECORD_INFO, params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public DomainRecord createDomainRecord( String domainName, DomainRecord domainRecord )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //      if( null == domainRecord ) {
-   //         throw new IllegalArgumentException( "Missing required parameter - domainRecord" );
-   //      }
-   //
-   //      Object[] params = { domainName };
-   //      return ( DomainRecord )perform(
-   //            new ApiRequest( ApiAction.CREATE_DOMAIN_RECORD, domainRecord, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public DomainRecord updateDomainRecord( String domainName, Integer recordId, String name )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //      checkNullAndThrowError( recordId, "Missing required parameter - recordId." );
-   //      checkEmptyAndThrowError( name, "Missing required parameter - name." );
-   //
-   //      Object[] params = { domainName, recordId };
-   //      return ( DomainRecord )perform(
-   //            new ApiRequest( ApiAction.UPDATE_DOMAIN_RECORD, new DomainRecord( name ), params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Delete deleteDomainRecord( String domainName, Integer recordId )
-   //         throws TutumException, RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( domainName, "Missing required parameter - domainName." );
-   //      checkNullAndThrowError( recordId, "Missing required parameter - recordId." );
-   //
-   //      Object[] params = { domainName, recordId };
-   //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_DOMAIN_RECORD, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Keys getAvailableKeys( Integer pageNo ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      return ( Keys )perform( new ApiRequest( ApiAction.AVAILABLE_KEYS, pageNo ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Key getKeyInfo( Integer sshKeyId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( sshKeyId, "Missing required parameter - sshKeyId." );
-   //
-   //      Object[] params = { sshKeyId };
-   //      return ( Key )perform( new ApiRequest( ApiAction.GET_KEY_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Key getKeyInfo( String fingerprint ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( fingerprint, "Missing required parameter - fingerprint." );
-   //
-   //      Object[] params = { fingerprint };
-   //      return ( Key )perform( new ApiRequest( ApiAction.GET_KEY_INFO, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Key createKey( Key newKey ) throws TutumException, RequestUnsuccessfulException {
-   //      if( null == newKey ) {
-   //         throw new IllegalArgumentException( "Missing required parameter - newKey" );
-   //      }
-   //      checkEmptyAndThrowError( newKey.getName(), "Missing required parameter - name." );
-   //      checkEmptyAndThrowError( newKey.getPublicKey(), "Missing required parameter - publicKey." );
-   //
-   //      return ( Key )perform( new ApiRequest( ApiAction.CREATE_KEY, newKey ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Key updateKey( Integer sshKeyId, String newSshKeyName ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( sshKeyId, "Missing required parameter - sshKeyId." );
-   //      checkEmptyAndThrowError( newSshKeyName, "Missing required parameter - newSshKeyName." );
-   //
-   //      Object[] params = { sshKeyId };
-   //      return ( Key )perform( new ApiRequest( ApiAction.UPDATE_KEY, new Key( newSshKeyName ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Key updateKey( String fingerprint, String newSshKeyName ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( fingerprint, "Missing required parameter - fingerprint." );
-   //      checkEmptyAndThrowError( newSshKeyName, "Missing required parameter - newSshKeyName." );
-   //
-   //      Object[] params = { fingerprint };
-   //      return ( Key )perform( new ApiRequest( ApiAction.UPDATE_KEY, new Key( newSshKeyName ), params ) )
-   //            .getData();
-   //   }
-   //
-   //   @Override
-   //   public Delete deleteKey( Integer sshKeyId ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkNullAndThrowError( sshKeyId, "Missing required parameter - sshKeyId." );
-   //
-   //      Object[] params = { sshKeyId };
-   //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_KEY, params ) ).getData();
-   //   }
-   //
-   //   @Override
-   //   public Delete deleteKey( String fingerprint ) throws TutumException,
-   //         RequestUnsuccessfulException {
-   //      checkEmptyAndThrowError( fingerprint, "Missing required parameter - fingerprint." );
-   //
-   //      Object[] params = { fingerprint };
-   //      return ( Delete )perform( new ApiRequest( ApiAction.DELETE_KEY, params ) ).getData();
-   //   }
-
    /**
     * @return the httpClient
     */
@@ -821,19 +280,6 @@ public class TutumClient implements Tutum {
       return ( NodeCluster )perform( new ApiRequest( ApiAction.UPGRADE_DOCKER_NODECLUSTER, params ) ).getData();
    }
 
-   //   private String appendRateLimitValues( String response, HttpResponse httpResponse ) {
-   //      if( StringUtils.isEmpty( response ) ) {
-   //         return "";
-   //      }
-   //
-   //      String rateLimitData =
-   //            String.format( Constants.RATE_LIMIT_JSON_STRUCT, httpResponse.getFirstHeader( "RateLimit-Limit" )
-   //                  .getValue(), httpResponse.getFirstHeader( "RateLimit-Remaining" ).getValue(),
-   //                  getDateString( httpResponse.getFirstHeader( "RateLimit-Reset" ).getValue(), Constants.DATE_FORMAT ) );
-   //
-   //      return StringUtils.substringBeforeLast( response, "}" ) + ", " + rateLimitData + "}";
-   //   }
-
    @SuppressWarnings("unused")
    private void checkEmptyAndThrowError( String str, String msg ) {
       if( StringUtils.isEmpty( str ) ) {
@@ -841,16 +287,6 @@ public class TutumClient implements Tutum {
          throw new IllegalArgumentException( msg );
       }
    }
-
-   // =======================================
-   // Validation methods
-   // =======================================
-
-   //   @SuppressWarnings("unused")
-   //   private void validateDropletIdAndPageNo( Integer dropletId, Integer pageNo ) {
-   //      validateDropletId( dropletId );
-   //      validatePageNo( pageNo );
-   //   }
 
    private void checkNullAndThrowError( Object val, String msg ) {
       if( null == val ) {
@@ -1100,6 +536,47 @@ public class TutumClient implements Tutum {
 
    private void validatePageNo( Integer pageNo ) {
       checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
+   }
+
+   @Override
+   public Nodes getNodes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, pageNo ) ).getData();
+   }
+
+   @Override
+   public Node getNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.GET_NODE, params ) ).getData();
+   }
+
+   @Override
+   public Node deployNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.DEPLOY_NODE, params ) ).getData();
+   }
+
+   @Override
+   public Node updateNode( Node node ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( node.getUuid(), "Missing required parameter - UUID." );
+      final Object[] params = { node.getUuid() };
+      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, params ) ).getData();
+   }
+
+   @Override
+   public Node upgradeDockerOnNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.UPGRADE_DOCKER_NODE, params ) ).getData();
+   }
+
+   @Override
+   public Node terminateNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.TERMINATE_NODE, params ) ).getData();
    }
 
 }
