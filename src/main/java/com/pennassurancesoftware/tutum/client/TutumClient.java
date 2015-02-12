@@ -28,7 +28,6 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,21 +66,24 @@ import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
+import com.pennassurancesoftware.tutum.dto.NodeClusterFilter;
 import com.pennassurancesoftware.tutum.dto.NodeClusters;
+import com.pennassurancesoftware.tutum.dto.NodeFilter;
 import com.pennassurancesoftware.tutum.dto.NodeType;
+import com.pennassurancesoftware.tutum.dto.NodeTypeFilter;
 import com.pennassurancesoftware.tutum.dto.NodeTypes;
 import com.pennassurancesoftware.tutum.dto.Nodes;
 import com.pennassurancesoftware.tutum.dto.Provider;
+import com.pennassurancesoftware.tutum.dto.ProviderFilter;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
+import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
 
-/**
- * Tutum API client wrapper methods Implementation
- */
+/** Tutum API client wrapper methods Implementation */
 public class TutumClient implements Tutum {
    /** Gson Parser instance for deserialize */
    private Gson deserialize;
@@ -171,6 +173,16 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Actions getActions() throws TutumException, RequestUnsuccessfulException {
+      return getActions( 1 );
+   }
+
+   @Override
+   public Actions getActions( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getActions( filter, 1 );
+   }
+
+   @Override
    public Actions getActions( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
       return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, getQueryParams( pageNo, filter ) ) ).getData();
@@ -178,20 +190,7 @@ public class TutumClient implements Tutum {
 
    @Override
    public Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, getQueryParams( pageNo ) ) ).getData();
-   }
-
-   private Map<String, List<String>> getQueryParams( Integer pageNo ) {
-      final Map<String, List<String>> result = new HashMap<String, List<String>>();
-      result.put( Constants.PARAM_PAGE_NO, Arrays.asList( pageNo.toString() ) );
-      return result;
-   }
-
-   private Map<String, List<String>> getQueryParams( Integer pageNo, Object filter ) {
-      final Map<String, List<String>> result = new QueryParamBuilder().setDateFormat( Constants.QUERY_PARAM_DATE_FORMAT ).createQueryParams( filter );;
-      result.put( Constants.PARAM_PAGE_NO, Arrays.asList( pageNo.toString() ) );
-      return result;
+      return getActions( null, pageNo );
    }
 
    /**
@@ -230,15 +229,45 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public NodeClusters getNodeClusters() throws TutumException, RequestUnsuccessfulException {
+      return getNodeClusters( 1 );
+   }
+
+   @Override
    public NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getNodeClusters( null, pageNo );
+   }
+
+   @Override
+   public NodeClusters getNodeClusters( NodeClusterFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getNodeClusters( filter, 1 );
+   }
+
+   @Override
+   public NodeClusters getNodeClusters( NodeClusterFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, getQueryParams( pageNo ) ) ).getData();
+      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public Nodes getNodes() throws TutumException, RequestUnsuccessfulException {
+      return getNodes( 1 );
    }
 
    @Override
    public Nodes getNodes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getNodes( null, pageNo );
+   }
+
+   @Override
+   public Nodes getNodes( NodeFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getNodes( filter, 1 );
+   }
+
+   @Override
+   public Nodes getNodes( NodeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, getQueryParams( pageNo ) ) ).getData();
+      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, getQueryParams( pageNo, filter ) ) ).getData();
    }
 
    @Override
@@ -250,9 +279,24 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public NodeTypes getNodeTypes() throws TutumException, RequestUnsuccessfulException {
+      return getNodeTypes( 1 );
+   }
+
+   @Override
    public NodeTypes getNodeTypes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getNodeTypes( null, pageNo );
+   }
+
+   @Override
+   public NodeTypes getNodeTypes( NodeTypeFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getNodeTypes( filter, 1 );
+   }
+
+   @Override
+   public NodeTypes getNodeTypes( NodeTypeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, getQueryParams( pageNo ) ) ).getData();
+      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, getQueryParams( pageNo, filter ) ) ).getData();
    }
 
    @Override
@@ -263,9 +307,24 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Providers getProviders() throws TutumException, RequestUnsuccessfulException {
+      return getProviders( 1 );
+   }
+
+   @Override
    public Providers getProviders( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getProviders( null, pageNo );
+   }
+
+   @Override
+   public Providers getProviders( ProviderFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getProviders( filter, 1 );
+   }
+
+   @Override
+   public Providers getProviders( ProviderFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, getQueryParams( pageNo ) ) ).getData();
+      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, getQueryParams( pageNo, filter ) ) ).getData();
    }
 
    @Override
@@ -277,9 +336,24 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Regions getRegions() throws TutumException, RequestUnsuccessfulException {
+      return getRegions( 1 );
+   }
+
+   @Override
    public Regions getRegions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getRegions( null, pageNo );
+   }
+
+   @Override
+   public Regions getRegions( RegionFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getRegions( filter, 1 );
+   }
+
+   @Override
+   public Regions getRegions( RegionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, getQueryParams( pageNo ) ) ).getData();
+      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, getQueryParams( pageNo, filter ) ) ).getData();
    }
 
    /**
@@ -500,6 +574,12 @@ public class TutumClient implements Tutum {
       String dateString = formatter.format( expiry );
       LOG.debug( dateString );
       return dateString;
+   }
+
+   private Map<String, List<String>> getQueryParams( Integer pageNo, Object filter ) {
+      final Map<String, List<String>> result = new QueryParamBuilder().setDateFormat( Constants.QUERY_PARAM_DATE_FORMAT ).createQueryParams( filter );;
+      result.put( Constants.PARAM_PAGE_NO, Arrays.asList( pageNo.toString() ) );
+      return result;
    }
 
    private Header[] getRequestHeaders() {

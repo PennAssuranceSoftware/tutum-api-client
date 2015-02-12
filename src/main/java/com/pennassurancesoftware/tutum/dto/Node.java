@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
+import com.pennassurancesoftware.tutum.type.NodeState;
+import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 
 public class Node implements Serializable {
    private static final long serialVersionUID = -3952227522277743092L;
@@ -87,8 +89,8 @@ public class Node implements Serializable {
       return resourceUri;
    }
 
-   public String getState() {
-      return state;
+   public NodeState getState() {
+      return EnumerationUtils.lookup( NodeState.class, state );
    }
 
    public List<Tag> getTags() {
@@ -147,6 +149,10 @@ public class Node implements Serializable {
       this.resourceUri = resourceUri;
    }
 
+   public void setState( NodeState state ) {
+      setState( state.value() );
+   }
+
    public void setState( String state ) {
       this.state = state;
    }
@@ -158,7 +164,7 @@ public class Node implements Serializable {
    public void setUuid( String uuid ) {
       this.uuid = uuid;
    }
-   
+
    @Override
    public String toString() {
       return ReflectionToStringBuilder.toString( this );

@@ -34,21 +34,21 @@ public class QueryParamBuilder {
    public String createQueryString( Object obj ) {
       final Map<String, List<String>> params = createQueryParams( obj );
       final StringBuffer buffer = new StringBuffer();
+      boolean firstParamFlag = true;
       if( !params.isEmpty() ) {
          buffer.append( "?" );
-         final List<String> keys = new ArrayList<String>( params.keySet() );
-         for( int index = 0; index < keys.size(); index++ ) {
-            final String key = keys.get( index );
+         for( String key : params.keySet() ) {
             for( String value : params.get( key ) ) {
                try {
+                  if( !firstParamFlag ) {
+                     buffer.append( "&" );
+                  }
                   buffer.append( key ).append( "=" ).append( URLEncoder.encode( value, "UTF-8" ) );
+                  firstParamFlag = false;
                }
                catch( Exception exception ) {
                   throw new RuntimeException( String.format( "Error encoding value: %s", value ), exception );
                }
-            }
-            if( index + 1 < keys.size() ) {
-               buffer.append( "&" );
             }
          }
       }
@@ -60,24 +60,39 @@ public class QueryParamBuilder {
       if( obj != null ) {
          final Field[] fields = obj.getClass().getDeclaredFields();
          for( Field field : fields ) {
-            final boolean accessible = field.isAccessible();
-            try {
-               field.setAccessible( true );
-               final String value = formatValue( field.get( obj ) );
-               if( value != null ) {
-                  final String name = field.isAnnotationPresent( QueryParamName.class ) ? field.getAnnotation( QueryParamName.class ).value() : field.getName();
-                  add( result, name, value );
-               }
-            }
-            catch( IllegalAccessException e ) {
-               throw new RuntimeException( "Error creating query params from object", e );
-            }
-            finally {
-               field.setAccessible( accessible );
-            }
+            add( result, obj, field );
          }
       }
       return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   private void add( Map<String, List<String>> result, Object obj, Field field ) {
+      final boolean accessible = field.isAccessible();
+      try {
+         field.setAccessible( true );
+         final Object rawValue = field.get( obj );
+         if( rawValue != null ) {
+            if( rawValue instanceof List ) {
+               for( Object item : ( List<Object> )rawValue ) {
+                  add( result, getKeyName( field ), item );
+               }
+            }
+            else {
+               add( result, getKeyName( field ), rawValue );
+            }
+         }
+      }
+      catch( IllegalAccessException e ) {
+         throw new RuntimeException( "Error creating query params from object", e );
+      }
+      finally {
+         field.setAccessible( accessible );
+      }
+   }
+
+   private String getKeyName( Field field ) {
+      return field.isAnnotationPresent( QueryParamName.class ) ? field.getAnnotation( QueryParamName.class ).value() : field.getName();
    }
 
    private String formatValue( Object value ) {
@@ -91,6 +106,13 @@ public class QueryParamBuilder {
          }
       }
       return result;
+   }
+
+   private void add( Map<String, List<String>> map, String key, Object obj ) {
+      final String value = formatValue( obj );
+      if( value != null ) {
+         add( map, key, value );
+      }
    }
 
    private void add( Map<String, List<String>> map, String key, String value ) {
