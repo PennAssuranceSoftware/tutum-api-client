@@ -2,6 +2,7 @@ package com.pennassurancesoftware.tutum;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,12 @@ import com.pennassurancesoftware.tutum.dto.Tag;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.util.IdUtils;
 
+@Ignore
 public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
+   private Tutum apiClient = new TutumClient( "" );
 
    @Test
    public void testActions() throws Exception {
