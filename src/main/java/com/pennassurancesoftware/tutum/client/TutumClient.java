@@ -59,6 +59,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.pennassurancesoftware.tutum.Tutum;
 import com.pennassurancesoftware.tutum.dto.Action;
+import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
@@ -144,6 +145,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Node deployNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.DEPLOY_NODE, params ) ).getData();
+   }
+
+   @Override
    public NodeCluster deployNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -155,6 +163,13 @@ public class TutumClient implements Tutum {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
       return ( Action )perform( new ApiRequest( ApiAction.GET_ACTION, params ) ).getData();
+   }
+
+   @Override
+   public Actions getActions( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      
+      return null;
    }
 
    @Override
@@ -185,6 +200,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Node getNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.GET_NODE, params ) ).getData();
+   }
+
+   @Override
    public NodeCluster getNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -195,6 +217,12 @@ public class TutumClient implements Tutum {
    public NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
       return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, pageNo ) ).getData();
+   }
+
+   @Override
+   public Nodes getNodes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, pageNo ) ).getData();
    }
 
    @Override
@@ -260,6 +288,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Node terminateNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.TERMINATE_NODE, params ) ).getData();
+   }
+
+   @Override
    public NodeCluster terminateNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -267,10 +302,24 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Node updateNode( Node node ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( node.getUuid(), "Missing required parameter - UUID." );
+      final Object[] params = { node.getUuid() };
+      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, params ) ).getData();
+   }
+
+   @Override
    public NodeCluster updateNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( cluster.getUuid(), "Missing required parameter - UUID." );
       final Object[] params = { cluster.getUuid() };
       return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, params ) ).getData();
+   }
+
+   @Override
+   public Node upgradeDockerOnNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Node )perform( new ApiRequest( ApiAction.UPGRADE_DOCKER_NODE, params ) ).getData();
    }
 
    @Override
@@ -439,7 +488,7 @@ public class TutumClient implements Tutum {
 
    private Header[] getRequestHeaders() {
       Header[] headers =
-      { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
+         { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
             new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
             new BasicHeader( "Authorization", "ApiKey " + authToken ) };
       return headers;
@@ -474,7 +523,7 @@ public class TutumClient implements Tutum {
    }
 
    private ApiResponse perform( ApiRequest request ) throws TutumException,
-         RequestUnsuccessfulException {
+   RequestUnsuccessfulException {
 
       URI uri = createUri( request );
       String response = null;
@@ -536,47 +585,6 @@ public class TutumClient implements Tutum {
 
    private void validatePageNo( Integer pageNo ) {
       checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
-   }
-
-   @Override
-   public Nodes getNodes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, pageNo ) ).getData();
-   }
-
-   @Override
-   public Node getNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Node )perform( new ApiRequest( ApiAction.GET_NODE, params ) ).getData();
-   }
-
-   @Override
-   public Node deployNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Node )perform( new ApiRequest( ApiAction.DEPLOY_NODE, params ) ).getData();
-   }
-
-   @Override
-   public Node updateNode( Node node ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( node.getUuid(), "Missing required parameter - UUID." );
-      final Object[] params = { node.getUuid() };
-      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, params ) ).getData();
-   }
-
-   @Override
-   public Node upgradeDockerOnNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Node )perform( new ApiRequest( ApiAction.UPGRADE_DOCKER_NODE, params ) ).getData();
-   }
-
-   @Override
-   public Node terminateNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Node )perform( new ApiRequest( ApiAction.TERMINATE_NODE, params ) ).getData();
    }
 
 }

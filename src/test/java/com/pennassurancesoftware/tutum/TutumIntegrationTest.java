@@ -27,7 +27,7 @@ public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "" );
+   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
 
    @Test
    public void testActions() throws Exception {

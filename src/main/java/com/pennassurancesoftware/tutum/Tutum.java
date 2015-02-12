@@ -21,6 +21,7 @@
 package com.pennassurancesoftware.tutum;
 
 import com.pennassurancesoftware.tutum.dto.Action;
+import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
@@ -103,6 +104,19 @@ public interface Tutum {
     * @since v1.0
     **/
    Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all actions in chronological order. Returns a list of Action objects.
+    * 
+    * @param filter Filters that can be applied to the actions that are returned
+    * @param pageNo for pagination
+    * @return {@link Actions}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    * 
+    * @since v1.0
+    **/
+   Actions getActions( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Method returns complete information for given action ID
