@@ -20,6 +20,10 @@
  */
 package com.pennassurancesoftware.tutum.client;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents Tutum API Request details
  * @since v2.0
@@ -28,7 +32,8 @@ public class ApiRequest {
    private ApiAction apiAction;
    private Object data;
    private Object[] params;
-   private Integer pageNo;
+   // private Integer pageNo;
+   private Map<String, List<String>> queryParams = new HashMap<String, List<String>>();
 
    public ApiRequest() {}
 
@@ -48,8 +53,8 @@ public class ApiRequest {
     * @param apiAction a info about api request
     * @param pageNo of the request pagination
     */
-   public ApiRequest( ApiAction apiAction, Integer pageNo ) {
-      this( apiAction, null, null, pageNo );
+   public ApiRequest( ApiAction apiAction, Map<String, List<String>> queryParams ) {
+      this( apiAction, null, null, queryParams );
    }
 
    /**
@@ -69,8 +74,8 @@ public class ApiRequest {
     * @param params a api request path variable value(s)
     * @param pageNo of the request pagination
     */
-   public ApiRequest( ApiAction apiAction, Object[] params, Integer pageNo ) {
-      this( apiAction, null, params, pageNo );
+   public ApiRequest( ApiAction apiAction, Object[] params, Map<String, List<String>> queryParams ) {
+      this( apiAction, null, params, queryParams );
    }
 
    /**
@@ -92,87 +97,54 @@ public class ApiRequest {
     * @param params a api request path variable value(s)
     * @param pageNo of the request pagination
     */
-   public ApiRequest( ApiAction apiAction, Object data, Object[] params, Integer pageNo ) {
+   public ApiRequest( ApiAction apiAction, Object data, Object[] params, Map<String, List<String>> queryParams ) {
       this.apiAction = apiAction;
       this.data = data;
       this.params = params;
-      this.pageNo = pageNo;
+      this.queryParams = queryParams;
    }
 
-   /**
-    * @return the path
-    */
    public String getPath() {
       return apiAction.getPath();
    }
 
-   /**
-    * @return the method
-    */
    public RequestMethod getMethod() {
       return apiAction.getMethod();
    }
 
-   /**
-    * @return the clazz
-    */
    public Class<?> getClazz() {
       return apiAction.getClazz();
    }
 
-   /**
-    * @return the apiAction
-    */
    public ApiAction getApiAction() {
       return apiAction;
    }
 
-   /**
-    * @param apiAction the apiAction to set
-    */
    public void setApiAction( ApiAction apiAction ) {
       this.apiAction = apiAction;
    }
 
-   /**
-    * @return the data
-    */
    public Object getData() {
       return data;
    }
 
-   /**
-    * @param data the data to set
-    */
    public void setData( Object data ) {
       this.data = data;
    }
 
-   /**
-    * @return the params
-    */
    public Object[] getParams() {
       return params;
    }
 
-   /**
-    * @param params the params to set
-    */
    public void setParams( Object[] params ) {
       this.params = params;
    }
 
-   /**
-    * @return the pageNo
-    */
-   public Integer getPageNo() {
-      return pageNo;
+   public Map<String, List<String>> getQueryParams() {
+      return queryParams;
    }
 
-   /**
-    * @param pageNo the pageNo to set
-    */
-   public void setPageNo( Integer pageNo ) {
-      this.pageNo = pageNo;
+   public void setQueryParams( Map<String, List<String>> queryParams ) {
+      this.queryParams = queryParams;
    }
 }

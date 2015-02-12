@@ -26,7 +26,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -73,6 +77,7 @@ import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
+import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
 
 /**
  * Tutum API client wrapper methods Implementation
@@ -168,14 +173,25 @@ public class TutumClient implements Tutum {
    @Override
    public Actions getActions( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      
-      return null;
+      return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, getQueryParams( pageNo, filter ) ) ).getData();
    }
 
    @Override
    public Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, pageNo ) ).getData();
+      return ( Actions )perform( new ApiRequest( ApiAction.ACTIONS, getQueryParams( pageNo ) ) ).getData();
+   }
+
+   private Map<String, List<String>> getQueryParams( Integer pageNo ) {
+      final Map<String, List<String>> result = new HashMap<String, List<String>>();
+      result.put( Constants.PARAM_PAGE_NO, Arrays.asList( pageNo.toString() ) );
+      return result;
+   }
+
+   private Map<String, List<String>> getQueryParams( Integer pageNo, Object filter ) {
+      final Map<String, List<String>> result = new QueryParamBuilder().setDateFormat( Constants.QUERY_PARAM_DATE_FORMAT ).createQueryParams( filter );;
+      result.put( Constants.PARAM_PAGE_NO, Arrays.asList( pageNo.toString() ) );
+      return result;
    }
 
    /**
@@ -216,13 +232,13 @@ public class TutumClient implements Tutum {
    @Override
    public NodeClusters getNodeClusters( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, pageNo ) ).getData();
+      return ( NodeClusters )perform( new ApiRequest( ApiAction.NODECLUSTERS, getQueryParams( pageNo ) ) ).getData();
    }
 
    @Override
    public Nodes getNodes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, pageNo ) ).getData();
+      return ( Nodes )perform( new ApiRequest( ApiAction.NODES, getQueryParams( pageNo ) ) ).getData();
    }
 
    @Override
@@ -236,7 +252,7 @@ public class TutumClient implements Tutum {
    @Override
    public NodeTypes getNodeTypes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, pageNo ) ).getData();
+      return ( NodeTypes )perform( new ApiRequest( ApiAction.NODETYPES, getQueryParams( pageNo ) ) ).getData();
    }
 
    @Override
@@ -249,7 +265,7 @@ public class TutumClient implements Tutum {
    @Override
    public Providers getProviders( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, pageNo ) ).getData();
+      return ( Providers )perform( new ApiRequest( ApiAction.PROVIDERS, getQueryParams( pageNo ) ) ).getData();
    }
 
    @Override
@@ -263,7 +279,7 @@ public class TutumClient implements Tutum {
    @Override
    public Regions getRegions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
-      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, pageNo ) ).getData();
+      return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, getQueryParams( pageNo ) ) ).getData();
    }
 
    /**
@@ -364,8 +380,11 @@ public class TutumClient implements Tutum {
       ub.setHost( apiHost );
       ub.setPath( createPath( request ) );
 
-      if( null != request.getPageNo() ) {
-         ub.setParameter( Constants.PARAM_PAGE_NO, request.getPageNo().toString() );
+      for( String paramName : request.getQueryParams().keySet() ) {
+         final List<String> values = request.getQueryParams().get( paramName );
+         for( String value : values ) {
+            ub.setParameter( paramName, value );
+         }
       }
 
       URI uri = null;
@@ -441,15 +460,12 @@ public class TutumClient implements Tutum {
 
       if( ( statusCode >= 400 && statusCode < 510 ) ) {
          String jsonStr = httpResponseToString( httpResponse );
-         LOG.debug( "JSON Response: " + jsonStr );
+         LOG.error( "JSON Response: " + jsonStr );
 
-         JsonObject jsonObj = jsonParser.parse( jsonStr ).getAsJsonObject();
-         String id = jsonObj.get( "id" ).getAsString();
-         String errorMsg =
-               String.format( "\nHTTP Status Code: %s\nError Id: %s\nError Message: %s", statusCode, id,
-                     jsonObj.get( "message" ).getAsString() );
+         final JsonObject jsonObj = jsonParser.parse( jsonStr ).getAsJsonObject();
+         String errorMsg = String.format( "\nHTTP Status Code: %s\nError Message: %s", statusCode, jsonObj.get( "error" ).getAsString() );
          LOG.debug( errorMsg );
-         throw new TutumException( errorMsg, id, statusCode );
+         throw new TutumException( errorMsg, "N/A", statusCode );
       }
 
       return response;
@@ -488,7 +504,7 @@ public class TutumClient implements Tutum {
 
    private Header[] getRequestHeaders() {
       Header[] headers =
-         { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
+      { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
             new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
             new BasicHeader( "Authorization", "ApiKey " + authToken ) };
       return headers;
@@ -523,7 +539,7 @@ public class TutumClient implements Tutum {
    }
 
    private ApiResponse perform( ApiRequest request ) throws TutumException,
-   RequestUnsuccessfulException {
+         RequestUnsuccessfulException {
 
       URI uri = createUri( request );
       String response = null;

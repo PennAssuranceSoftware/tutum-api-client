@@ -20,8 +20,9 @@ public class QueryParamBuilder {
       return dateFormat;
    }
 
-   public void setDateFormat( String dateFormat ) {
+   public QueryParamBuilder setDateFormat( String dateFormat ) {
       this.dateFormat = dateFormat;
+      return this;
    }
 
    @Retention(RetentionPolicy.RUNTIME)
@@ -30,8 +31,8 @@ public class QueryParamBuilder {
       String value();
    }
 
-   public String toQueryString( Object obj ) {
-      final Map<String, List<String>> params = toQueryParams( obj );
+   public String createQueryString( Object obj ) {
+      final Map<String, List<String>> params = createQueryParams( obj );
       final StringBuffer buffer = new StringBuffer();
       if( !params.isEmpty() ) {
          buffer.append( "?" );
@@ -54,7 +55,7 @@ public class QueryParamBuilder {
       return buffer.toString();
    }
 
-   public Map<String, List<String>> toQueryParams( Object obj ) {
+   public Map<String, List<String>> createQueryParams( Object obj ) {
       final Map<String, List<String>> result = new HashMap<String, List<String>>();
       if( obj != null ) {
          final Field[] fields = obj.getClass().getDeclaredFields();

@@ -22,8 +22,8 @@ public class TestQueryParamUtils {
       // Call
       final QueryParamBuilder builder = new QueryParamBuilder();
       builder.setDateFormat( "yyyy-MM-dd" );
-      final Map<String, List<String>> params = builder.toQueryParams( filter );
-      final String queryString = builder.toQueryString( filter );
+      final Map<String, List<String>> params = builder.createQueryParams( filter );
+      final String queryString = builder.createQueryString( filter );
 
       // Assert
       System.out.println( params );

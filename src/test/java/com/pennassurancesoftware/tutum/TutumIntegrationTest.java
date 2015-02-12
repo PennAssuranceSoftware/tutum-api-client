@@ -1,5 +1,7 @@
 package com.pennassurancesoftware.tutum;
 
+import java.util.Date;
+
 import junit.framework.Assert;
 
 import org.junit.Ignore;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.pennassurancesoftware.tutum.client.TutumClient;
 import com.pennassurancesoftware.tutum.dto.Action;
+import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
@@ -34,6 +37,23 @@ public class TutumIntegrationTest {
    @Test
    public void testActions() throws Exception {
       final Actions actions = apiClient.getActions( 1 );
+
+      Assert.assertNotNull( actions );
+      Assert.assertTrue( ( actions.getObjects().size() > 0 ) );
+
+      for( Action action : actions.getObjects() ) {
+         LOG.info( action.toString() );
+      }
+
+   }
+
+   @Test
+   public void testActionsWithFilter() throws Exception {
+      final ActionFilter filter = new ActionFilter()
+            .setEndDateLte( new Date() )
+            .setStartDateGte( new Date( new Date().getTime() - 1000000000 ) );
+
+      final Actions actions = apiClient.getActions( filter, 1 );
 
       Assert.assertNotNull( actions );
       Assert.assertTrue( ( actions.getObjects().size() > 0 ) );
@@ -184,7 +204,7 @@ public class TutumIntegrationTest {
       LOG.info( "Cluster After Terminate: {}", current );
    }
 
-   @Test
+   // @Test
    public void testNodes() throws Exception {
       final String clusterName = "cluster-" + IdUtils.smallRandom();
       // final String nodeName = "node-" + IdUtils.smallRandom();

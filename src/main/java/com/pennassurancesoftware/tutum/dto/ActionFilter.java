@@ -2,6 +2,8 @@ package com.pennassurancesoftware.tutum.dto;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import com.pennassurancesoftware.tutum.type.ActionState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder.QueryParamName;
@@ -42,31 +44,43 @@ public class ActionFilter {
       return EnumerationUtils.lookup( ActionState.class, state );
    }
 
-   public void setEndDateGte( Date endDateGte ) {
+   public ActionFilter setEndDateGte( Date endDateGte ) {
       this.endDateGte = endDateGte;
+      return this;
    }
 
-   public void setEndDateLte( Date endDateLte ) {
+   public ActionFilter setEndDateLte( Date endDateLte ) {
       this.endDateLte = endDateLte;
+      return this;
    }
 
-   public void setObject( String object ) {
+   public ActionFilter setObject( String object ) {
       this.object = object;
+      return this;
    }
 
-   public void setStartDateGte( Date startDateGte ) {
+   public ActionFilter setStartDateGte( Date startDateGte ) {
       this.startDateGte = startDateGte;
+      return this;
    }
 
-   public void setStartDateLte( Date startDateLte ) {
+   public ActionFilter setStartDateLte( Date startDateLte ) {
       this.startDateLte = startDateLte;
+      return this;
    }
 
-   public void setState( String state ) {
+   public ActionFilter setState( String state ) {
       this.state = state;
+      return this;
    }
 
-   public void setState( ActionState state ) {
+   public ActionFilter setState( ActionState state ) {
       setState( state.value() );
+      return this;
+   }
+
+   @Override
+   public String toString() {
+      return ReflectionToStringBuilder.toString( this );
    }
 }
