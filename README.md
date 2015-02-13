@@ -1,6 +1,6 @@
 Tutum API Client in Java
 -------------------------------
-[ ![Codeship Status for Tutum API Client](https://codeship.com/projects/560e8190-9495-0132-77ca-568d385d87f2/status)](https://codeship.com/projects/62585)
+[ ![Codeship Status for Tutum API Client](https://codeship.com/projects/c1afc4a0-95f9-0132-0cbc-721f12f31a2c/status)](https://codeship.com/projects/62970)
 
 Welcome to Tutum API Client written in Java. Created a simple and meaningful wrapper methods for [Tutum RESTful APIs][1].
 
