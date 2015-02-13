@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -40,6 +42,7 @@ import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
@@ -84,6 +87,9 @@ import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
+import com.pennassurancesoftware.tutum.dto.Tag;
+import com.pennassurancesoftware.tutum.dto.TagFilter;
+import com.pennassurancesoftware.tutum.dto.Tags;
 import com.pennassurancesoftware.tutum.dto.Token;
 import com.pennassurancesoftware.tutum.dto.Volume;
 import com.pennassurancesoftware.tutum.dto.VolumeFilter;
@@ -93,6 +99,7 @@ import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
+import com.pennassurancesoftware.tutum.type.TagResourceType;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
 
 /** Tutum API client wrapper methods Implementation */
@@ -234,6 +241,41 @@ public class TutumClient implements Tutum {
       return authToken;
    }
 
+   @Override
+   public Container getContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Container )perform( new ApiRequest( ApiAction.GET_CONTAINER, params ) ).getData();
+   }
+
+   @Override
+   public String getContainerLogs( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( ( Logs )perform( new ApiRequest( ApiAction.GET_CONTAINER_LOGS, ( Object )null, params ) ).getData() ).getLogs();
+   }
+
+   @Override
+   public Containers getContainers() throws TutumException, RequestUnsuccessfulException {
+      return getContainers( 1 );
+   }
+
+   @Override
+   public Containers getContainers( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getContainers( filter, 1 );
+   }
+
+   @Override
+   public Containers getContainers( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Containers )perform( new ApiRequest( ApiAction.CONTAINERS, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public Containers getContainers( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getContainers( null, pageNo );
+   }
+
    /**
     * @return the httpClient
     */
@@ -277,6 +319,11 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Tags getNodeClusterTags( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return getTags( TagResourceType.NodeCluster, uuid );
+   }
+
+   @Override
    public Nodes getNodes() throws TutumException, RequestUnsuccessfulException {
       return getNodes( 1 );
    }
@@ -295,6 +342,11 @@ public class TutumClient implements Tutum {
    public Nodes getNodes( NodeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
       return ( Nodes )perform( new ApiRequest( ApiAction.NODES, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public Tags getNodeTags( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return getTags( TagResourceType.Node, uuid );
    }
 
    @Override
@@ -419,6 +471,91 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Tags getServiceTags( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return getTags( TagResourceType.Service, uuid );
+   }
+
+   @Override
+   public Tags getTags( TagResourceType type, String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return getTags( type, uuid, 1 );
+   }
+
+   @Override
+   public Tags getTags( TagResourceType type, String uuid, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getTags( type, uuid, null, pageNo );
+   }
+
+   @Override
+   public Tags getTags( TagResourceType type, String uuid, TagFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getTags( type, uuid, filter, 1 );
+   }
+
+   @Override
+   public Tags getTags( TagResourceType type, String uuid, TagFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      checkNullAndThrowError( type, "Missing required parameter - Resource Type." );
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { type.value(), uuid };
+      return ( Tags )perform( new ApiRequest( ApiAction.TAGS, params, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public Volume getVolume( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Volume )perform( new ApiRequest( ApiAction.GET_VOLUME, params ) ).getData();
+   }
+
+   @Override
+   public VolumeGroup getVolumeGroup( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( VolumeGroup )perform( new ApiRequest( ApiAction.GET_VOLUMEGROUP, params ) ).getData();
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException {
+      return getVolumeGroups( 1 );
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumeGroups( null, pageNo );
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumeGroups( filter, 1 );
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups( VolumeGroupFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( VolumeGroups )perform( new ApiRequest( ApiAction.VOLUMEGROUPS, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public Volumes getVolumes() throws TutumException, RequestUnsuccessfulException {
+      return getVolumes( 1 );
+   }
+
+   @Override
+   public Volumes getVolumes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumes( null, pageNo );
+   }
+
+   @Override
+   public Volumes getVolumes( VolumeFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumes( filter, 1 );
+   }
+
+   @Override
+   public Volumes getVolumes( VolumeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Volumes )perform( new ApiRequest( ApiAction.VOLUMES, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
    public Service redeployService( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -447,6 +584,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Container startContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Container )perform( new ApiRequest( ApiAction.START_CONTAINER, ( Object )null, params ) ).getData();
+   }
+
+   @Override
    public Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -454,10 +598,24 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Container stopContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Container )perform( new ApiRequest( ApiAction.STOP_CONTAINER, ( Object )null, params ) ).getData();
+   }
+
+   @Override
    public Service stopService( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
       return ( Service )perform( new ApiRequest( ApiAction.STOP_SERVICE, ( Object )null, params ) ).getData();
+   }
+
+   @Override
+   public Container terminateContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Container )perform( new ApiRequest( ApiAction.TERMINATE_CONTAINER, params ) ).getData();
    }
 
    @Override
@@ -616,7 +774,7 @@ public class TutumClient implements Tutum {
       return executeHttpRequest( put );
    }
 
-   private String evaluateResponse( HttpResponse httpResponse ) throws TutumException {
+   private String evaluateResponse( HttpRequestBase request, HttpResponse httpResponse ) throws TutumException {
       int statusCode = httpResponse.getStatusLine().getStatusCode();
       String response = "";
 
@@ -632,16 +790,27 @@ public class TutumClient implements Tutum {
       if( ( statusCode >= 400 && statusCode < 510 ) ) {
          String jsonStr = httpResponseToString( httpResponse );
          jsonStr = jsonStr == null || "".equals( jsonStr ) ? "{}" : jsonStr;
-         LOG.error( "JSON Response: " + jsonStr );
+         LOG.error( "JSON Message: {}", getRequestMessage( request ) );
+         LOG.error( "JSON Response: {}", jsonStr );
 
          final JsonObject jsonObj = jsonParser.parse( jsonStr ).getAsJsonObject();
          final String message = jsonObj.has( "error" ) ? jsonObj.get( "error" ).getAsString() : jsonStr;
          String errorMsg = String.format( "\nHTTP Status Code: %s\nError Message: %s", statusCode, message );
          LOG.debug( errorMsg );
+
          throw new TutumException( errorMsg, "N/A", statusCode );
       }
 
       return response;
+   }
+
+   private String getRequestMessage( HttpRequestBase request ) {
+      String result = null;
+      if( request instanceof HttpEntityEnclosingRequestBase ) {
+         final HttpEntity entity = ( ( HttpEntityEnclosingRequestBase )request ).getEntity();
+         result = readString( entity );
+      }
+      return result;
    }
 
    private String executeHttpRequest( HttpRequestBase request ) throws TutumException, RequestUnsuccessfulException {
@@ -649,7 +818,7 @@ public class TutumClient implements Tutum {
       try {
          final HttpResponse httpResponse = httpClient.execute( request );
          LOG.debug( "HTTP Response Object:: " + httpResponse );
-         response = evaluateResponse( httpResponse );
+         response = evaluateResponse( request, httpResponse );
          LOG.debug( "Parsed Response:: " + response );
       }
       catch( ClientProtocolException cpe ) {
@@ -717,8 +886,7 @@ public class TutumClient implements Tutum {
       }
    }
 
-   private ApiResponse perform( ApiRequest request ) throws TutumException,
-         RequestUnsuccessfulException {
+   private ApiResponse perform( ApiRequest request ) throws TutumException, RequestUnsuccessfulException {
 
       URI uri = createUri( request );
       String response = null;
@@ -769,9 +937,17 @@ public class TutumClient implements Tutum {
       }
    }
 
+   private String readString( HttpEntity entity ) {
+      String result = null;
+      if( entity != null && entity instanceof StringEntity ) {
+         result = readString( ( StringEntity )entity );
+      }
+      return result;
+   }
+
    private String readString( StringEntity entity ) {
       try {
-         return readString( entity.getContent() );
+         return entity != null ? readString( entity.getContent() ) : null;
       }
       catch( Exception exception ) {
          throw new RuntimeException( "Error reading String Entity", exception );
@@ -783,114 +959,27 @@ public class TutumClient implements Tutum {
    }
 
    @Override
-   public Containers getContainers() throws TutumException, RequestUnsuccessfulException {
-      return getContainers( 1 );
-   }
-
-   @Override
-   public Containers getContainers( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException {
-      return getContainers( filter, 1 );
-   }
-
-   @Override
-   public Containers getContainers( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Containers )perform( new ApiRequest( ApiAction.CONTAINERS, getQueryParams( pageNo, filter ) ) ).getData();
-   }
-
-   @Override
-   public Containers getContainers( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      return getContainers( null, pageNo );
-   }
-
-   @Override
-   public Container getContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
+   public List<Tag> tag( TagResourceType type, String uuid, Tag... tags ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( type, "Missing required parameter - Resource Type." );
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Container )perform( new ApiRequest( ApiAction.GET_CONTAINER, params ) ).getData();
+      checkNullAndThrowError( tags, "Missing required parameter - Tag." );
+      if( tags.length > 1 ) {
+         throw new RuntimeException( "Only one tag is supported with the current API binding" );
+      }
+      final List<Tag> result = new ArrayList<Tag>();
+      if( tags.length == 1 ) {
+         final Object[] params = { type.value(), uuid };
+         result.addAll( Arrays.asList( ( Tag[] )perform( new ApiRequest( ApiAction.TAG_RESOURCE, ( Object )tags[0], params ) ).getData() ) );
+      }
+      return result;
    }
 
    @Override
-   public String getContainerLogs( String uuid ) throws TutumException, RequestUnsuccessfulException {
+   public Tag deleteTag( TagResourceType type, String uuid, String name ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( type, "Missing required parameter - Resource Type." );
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( ( Logs )perform( new ApiRequest( ApiAction.GET_CONTAINER_LOGS, ( Object )null, params ) ).getData() ).getLogs();
-   }
-
-   @Override
-   public Container startContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Container )perform( new ApiRequest( ApiAction.START_CONTAINER, ( Object )null, params ) ).getData();
-   }
-
-   @Override
-   public Container stopContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Container )perform( new ApiRequest( ApiAction.STOP_CONTAINER, ( Object )null, params ) ).getData();
-   }
-
-   @Override
-   public Container terminateContainer( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Container )perform( new ApiRequest( ApiAction.TERMINATE_CONTAINER, params ) ).getData();
-   }
-
-   @Override
-   public VolumeGroup getVolumeGroup( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( VolumeGroup )perform( new ApiRequest( ApiAction.GET_VOLUMEGROUP, params ) ).getData();
-   }
-
-   @Override
-   public VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException {
-      return getVolumeGroups( 1 );
-   }
-
-   @Override
-   public VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException {
-      return getVolumeGroups( filter, 1 );
-   }
-
-   @Override
-   public VolumeGroups getVolumeGroups( VolumeGroupFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( VolumeGroups )perform( new ApiRequest( ApiAction.VOLUMEGROUPS, getQueryParams( pageNo, filter ) ) ).getData();
-   }
-
-   @Override
-   public VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      return getVolumeGroups( null, pageNo );
-   }
-
-   @Override
-   public Volume getVolume( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Volume )perform( new ApiRequest( ApiAction.GET_VOLUME, params ) ).getData();
-   }
-
-   @Override
-   public Volumes getVolumes() throws TutumException, RequestUnsuccessfulException {
-      return getVolumes( 1 );
-   }
-
-   @Override
-   public Volumes getVolumes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      return getVolumes( null, pageNo );
-   }
-
-   @Override
-   public Volumes getVolumes( VolumeFilter filter ) throws TutumException, RequestUnsuccessfulException {
-      return getVolumes( filter, 1 );
-   }
-
-   @Override
-   public Volumes getVolumes( VolumeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
-      validatePageNo( pageNo );
-      return ( Volumes )perform( new ApiRequest( ApiAction.VOLUMES, getQueryParams( pageNo, filter ) ) ).getData();
+      checkNullAndThrowError( name, "Missing required parameter - Tag Name." );
+      final Object[] params = { type.value(), uuid, name };
+      return ( Tag )perform( new ApiRequest( ApiAction.DELETE_TAG, params ) ).getData();
    }
 }

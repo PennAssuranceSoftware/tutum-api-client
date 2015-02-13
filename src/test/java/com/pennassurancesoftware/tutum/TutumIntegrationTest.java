@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -37,6 +38,7 @@ import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.type.ContainerState;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.type.ServiceState;
+import com.pennassurancesoftware.tutum.type.TagResourceType;
 import com.pennassurancesoftware.tutum.util.IdUtils;
 
 public class TutumIntegrationTest {
@@ -214,7 +216,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test(groups = { "integration" }, enabled = true)
+   @Test(groups = { "integration" }, enabled = false)
    public void testVolume() throws Exception {
       final Volumes volumes = apiClient.getVolumes();
 
@@ -227,6 +229,24 @@ public class TutumIntegrationTest {
          final Volume current = apiClient.getVolume( volume.getUuid() );
          Assert.assertNotNull( current );
       }
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testTagging() throws Exception {
+      final TagResourceType type = TagResourceType.Service;
+      final String uuid = "62115059-c6e3-4e8e-908e-e75a9de95330";
+      final String name = "unit-" + IdUtils.smallRandom();
+
+      final List<Tag> result = apiClient.tag( type, uuid, new Tag( name ) );
+
+      Assert.assertNotNull( result );
+      Assert.assertTrue( ( result.size() > 0 ) );
+      LOG.info( result.toString() );
+
+      final Tag deleted = apiClient.deleteTag( type, uuid, name );
+
+      Assert.assertNotNull( deleted );
+      LOG.info( "Deleted: {}", result.toString() );
    }
 
    private void terminate( Container container ) {

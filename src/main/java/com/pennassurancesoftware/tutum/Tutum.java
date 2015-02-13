@@ -20,6 +20,8 @@
  */
 package com.pennassurancesoftware.tutum;
 
+import java.util.List;
+
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
@@ -42,6 +44,9 @@ import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
+import com.pennassurancesoftware.tutum.dto.Tag;
+import com.pennassurancesoftware.tutum.dto.TagFilter;
+import com.pennassurancesoftware.tutum.dto.Tags;
 import com.pennassurancesoftware.tutum.dto.Token;
 import com.pennassurancesoftware.tutum.dto.Volume;
 import com.pennassurancesoftware.tutum.dto.VolumeFilter;
@@ -51,6 +56,7 @@ import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
+import com.pennassurancesoftware.tutum.type.TagResourceType;
 
 /**
  * <p>
@@ -401,6 +407,18 @@ public interface Tutum {
    NodeClusters getNodeClusters( NodeClusterFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Method returns the tags for a specified node cluster
+    *
+    * @param uuid the id of the node cluster
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Tags getNodeClusterTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Lists all current and recently terminated nodes. Returns a list of Node objects.
     *
     * @return {@link Nodes}
@@ -447,6 +465,18 @@ public interface Tutum {
     * @since v1.0
     **/
    Nodes getNodes( NodeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns the tags for a specified node
+    *
+    * @param uuid the id of the node
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Tags getNodeTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Get all the details of a specific node type
@@ -701,6 +731,74 @@ public interface Tutum {
     * @since v1.0
     **/
    Services getServices( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns the tags for a specified service
+    *
+    * @param uuid the id of the service
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Tags getServiceTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all tags in chronological order. Returns a list of Tag objects.
+    *
+    * @param type Type of resource to get tags for
+    * @param uuid Identifier of the resource to get tags for
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Tags getTags( TagResourceType type, String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all tags in chronological order. Returns a list of Tag objects.
+    *
+    * @param type Type of resource to get tags for
+    * @param uuid Identifier of the resource to get tags for
+    * @param pageNo for pagination
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Tags getTags( TagResourceType type, String uuid, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all tags in chronological order. Returns a list of Tag objects.
+    *
+    * @param type Type of resource to get tags for
+    * @param uuid Identifier of the resource to get tags for
+    * @param filter Filters that can be applied to the tags that are returned
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Tags getTags( TagResourceType type, String uuid, TagFilter filter ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all tags in chronological order. Returns a list of Tag objects.
+    *
+    * @param type Type of resource to get tags for
+    * @param uuid Identifier of the resource to get tags for
+    * @param filter Filters that can be applied to the tags that are returned
+    * @param pageNo for pagination
+    * @return {@link Tags}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Tags getTags( TagResourceType type, String uuid, TagFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Method returns complete information for given volume ID
@@ -991,4 +1089,31 @@ public interface Tutum {
     * @since v1.0
     */
    NodeCluster upgradeDockerOnNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Tags the specified resource
+    *
+    * @param type Type of resource to tag
+    * @param uuid the id of the resource
+    * @return {@link List<Tag>}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   List<Tag> tag( TagResourceType type, String uuid, Tag... tags ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Deletes a tag from the specified resource
+    *
+    * @param type Type of resource to tag
+    * @param uuid the id of the resource
+    * @param name Name of the tag to delete
+    * @return {@link Tag}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Tag deleteTag( TagResourceType type, String uuid, String name ) throws TutumException, RequestUnsuccessfulException;
 }

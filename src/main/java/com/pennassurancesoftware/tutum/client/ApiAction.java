@@ -37,6 +37,8 @@ import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
+import com.pennassurancesoftware.tutum.dto.Tag;
+import com.pennassurancesoftware.tutum.dto.Tags;
 import com.pennassurancesoftware.tutum.dto.Token;
 import com.pennassurancesoftware.tutum.dto.Volume;
 import com.pennassurancesoftware.tutum.dto.VolumeGroup;
@@ -88,8 +90,11 @@ public enum ApiAction {
    VOLUMEGROUPS("/volumegroup", RequestMethod.GET, VolumeGroups.class),
    GET_VOLUMEGROUP("/volumegroup/%s", RequestMethod.GET, VolumeGroup.class),
    VOLUMES("/volume", RequestMethod.GET, Volumes.class),
-   GET_VOLUME("/volume/%s", RequestMethod.GET, Volume.class), 
-   
+   GET_VOLUME("/volume/%s", RequestMethod.GET, Volume.class),
+   TAGS("/%s/%s/tags/", RequestMethod.GET, Tags.class),
+   TAG_RESOURCE("/%s/%s/tags/", RequestMethod.POST, Tag[].class),
+   DELETE_TAG("/%s/%s/tags/%s/", RequestMethod.DELETE, Tag.class),
+
    ;
 
    private String path;
