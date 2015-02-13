@@ -85,6 +85,9 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Token;
+import com.pennassurancesoftware.tutum.dto.VolumeGroup;
+import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
+import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
@@ -830,5 +833,33 @@ public class TutumClient implements Tutum {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
       return ( Container )perform( new ApiRequest( ApiAction.TERMINATE_CONTAINER, params ) ).getData();
+   }
+
+   @Override
+   public VolumeGroup getVolumeGroup( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( VolumeGroup )perform( new ApiRequest( ApiAction.GET_VOLUMEGROUP, params ) ).getData();
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException {
+      return getVolumeGroups( 1 );
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumeGroups( filter, 1 );
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups( VolumeGroupFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( VolumeGroups )perform( new ApiRequest( ApiAction.VOLUMEGROUPS, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumeGroups( null, pageNo );
    }
 }

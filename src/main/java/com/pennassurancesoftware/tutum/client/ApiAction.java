@@ -38,6 +38,8 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Token;
+import com.pennassurancesoftware.tutum.dto.VolumeGroup;
+import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 
 /**
  * Enumeration of Tutum RESTful resource information.
@@ -80,7 +82,11 @@ public enum ApiAction {
    GET_CONTAINER_LOGS("/container/%s/logs/", RequestMethod.GET, Logs.class),
    START_CONTAINER("/container/%s/start/", RequestMethod.POST, Container.class),
    STOP_CONTAINER("/container/%s/stop/", RequestMethod.POST, Container.class),
-   TERMINATE_CONTAINER("/container/%s/", RequestMethod.DELETE, Container.class), ;
+   TERMINATE_CONTAINER("/container/%s/", RequestMethod.DELETE, Container.class),
+   VOLUMEGROUPS("/volumegroup", RequestMethod.GET, VolumeGroups.class),
+   GET_VOLUMEGROUP("/volumegroup/%s", RequestMethod.GET, VolumeGroup.class),
+
+   ;
 
    private String path;
 

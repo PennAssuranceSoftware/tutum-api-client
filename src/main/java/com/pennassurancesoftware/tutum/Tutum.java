@@ -43,6 +43,9 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Token;
+import com.pennassurancesoftware.tutum.dto.VolumeGroup;
+import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
+import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -249,6 +252,78 @@ public interface Tutum {
     * @since v1.0
     **/
    Actions getActions( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given container ID
+    *
+    * @param uuid the id of the container
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container getContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns the logs for a specified container
+    *
+    * @param uuid the id of the container
+    * @return {@link String}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   String getContainerLogs( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers() throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @param filter Filters that can be applied to the containers that are returned
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @param filter Filters that can be applied to the containers that are returned
+    * @param pageNo for pagination
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @param pageNo for pagination
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Get all the details of an specific node
@@ -637,6 +712,18 @@ public interface Tutum {
    Service redeployService( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Starts a stopped container.
+    *
+    * @param container Container object with the UUID of the container to start
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container startContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Starts all containers in a stopped or partly running service.
     *
     * @param service Service object with the UUID of the service to start
@@ -649,6 +736,18 @@ public interface Tutum {
    Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Stops a running container.
+    *
+    * @param container Container object with the UUID of the container to stop
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container stopContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Stops all containers in a running or partly running service.
     *
     * @param service Service object with the UUID of the service to stop
@@ -659,6 +758,18 @@ public interface Tutum {
     * @since v1.0
     */
    Service stopService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Terminates the specified container. This is not reversible. All data stored in the container will be permanently deleted.
+    *
+    * @param container Container object with the UUID of the container to terminated
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container terminateContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Terminates the specified node. For security reasons, only nodes with no running containers can be terminated,
@@ -759,110 +870,62 @@ public interface Tutum {
    NodeCluster upgradeDockerOnNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
-    * Lists all containers in chronological order. Returns a list of Action objects.
+    * Method returns complete information for given volume group ID
     *
-    * @return {@link Containers}
+    * @param uuid the id of the volume group
+    * @return {@link VolumeGroup}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   VolumeGroup getVolumeGroup( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
+    *
+    * @return {@link VolumeGroups}
     * @throws TutumException
     * @throws RequestUnsuccessfulException
     *
     * @since v1.0
     **/
-   Containers getContainers() throws TutumException, RequestUnsuccessfulException;
+   VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException;
 
    /**
-    * Lists all containers in chronological order. Returns a list of Action objects.
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
     *
-    * @param filter Filters that can be applied to the containers that are returned
-    * @return {@link Containers}
+    * @param filter Filters that can be applied to the volume group that are returned
+    * @return {@link VolumeGroups}
     * @throws TutumException
     * @throws RequestUnsuccessfulException
     *
     * @since v1.0
     **/
-   Containers getContainers( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
-    * Lists all containers in chronological order. Returns a list of Action objects.
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
     *
-    * @param filter Filters that can be applied to the containers that are returned
+    * @param filter Filters that can be applied to the volume group that are returned
     * @param pageNo for pagination
-    * @return {@link Containers}
+    * @return {@link VolumeGroups}
     * @throws TutumException
     * @throws RequestUnsuccessfulException
     *
     * @since v1.0
     **/
-   Containers getContainers( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+   VolumeGroups getVolumeGroups( VolumeGroupFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
-    * Lists all containers in chronological order. Returns a list of Action objects.
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
     *
     * @param pageNo for pagination
-    * @return {@link Containers}
+    * @return {@link VolumeGroups}
     * @throws TutumException
     * @throws RequestUnsuccessfulException
     *
     * @since v1.0
     **/
-   Containers getContainers( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Method returns complete information for given container ID
-    *
-    * @param uuid the id of the container
-    * @return {@link Container}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   Container getContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Method returns the logs for a specified container
-    *
-    * @param uuid the id of the container
-    * @return {@link String}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   String getContainerLogs( String uuid ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Starts a stopped container.
-    *
-    * @param container Container object with the UUID of the container to start
-    * @return {@link Container}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   Container startContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Stops a running container.
-    *
-    * @param container Container object with the UUID of the container to stop
-    * @return {@link Container}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   Container stopContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Terminates the specified container. This is not reversible. All data stored in the container will be permanently deleted.
-    *
-    * @param container Container object with the UUID of the container to terminated
-    * @return {@link Container}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   Container terminateContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+   VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 }
