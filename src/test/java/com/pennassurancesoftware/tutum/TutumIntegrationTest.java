@@ -30,8 +30,10 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Tag;
+import com.pennassurancesoftware.tutum.dto.Volume;
 import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
+import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.type.ContainerState;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.type.ServiceState;
@@ -197,7 +199,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test(groups = { "integration" }, enabled = true)
+   @Test(groups = { "integration" }, enabled = false)
    public void testVolumeGroups() throws Exception {
       final VolumeGroups volGrps = apiClient.getVolumeGroups();
 
@@ -208,6 +210,21 @@ public class TutumIntegrationTest {
          LOG.info( group.toString() );
 
          final VolumeGroup current = apiClient.getVolumeGroup( group.getUuid() );
+         Assert.assertNotNull( current );
+      }
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testVolume() throws Exception {
+      final Volumes volumes = apiClient.getVolumes();
+
+      Assert.assertNotNull( volumes );
+      Assert.assertTrue( ( volumes.getObjects().size() > 0 ) );
+
+      for( Volume volume : volumes.getObjects() ) {
+         LOG.info( volume.toString() );
+
+         final Volume current = apiClient.getVolume( volume.getUuid() );
          Assert.assertNotNull( current );
       }
    }

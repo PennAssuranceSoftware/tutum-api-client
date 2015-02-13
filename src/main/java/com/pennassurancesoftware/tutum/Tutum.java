@@ -43,9 +43,12 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Token;
+import com.pennassurancesoftware.tutum.dto.Volume;
+import com.pennassurancesoftware.tutum.dto.VolumeFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
+import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -700,6 +703,126 @@ public interface Tutum {
    Services getServices( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Method returns complete information for given volume ID
+    *
+    * @param uuid the id of the volume
+    * @return {@link Volume}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Volume getVolume( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given volume group ID
+    *
+    * @param uuid the id of the volume group
+    * @return {@link VolumeGroup}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   VolumeGroup getVolumeGroup( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
+    *
+    * @return {@link VolumeGroups}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
+    *
+    * @param pageNo for pagination
+    * @return {@link VolumeGroups}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
+    *
+    * @param filter Filters that can be applied to the volume group that are returned
+    * @return {@link VolumeGroups}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
+    *
+    * @param filter Filters that can be applied to the volume group that are returned
+    * @param pageNo for pagination
+    * @return {@link VolumeGroups}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   VolumeGroups getVolumeGroups( VolumeGroupFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volumes in chronological order. Returns a list of Volume objects.
+    *
+    * @return {@link Volumes}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Volumes getVolumes() throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volumes in chronological order. Returns a list of Volume objects.
+    *
+    * @param pageNo for pagination
+    * @return {@link Volumes}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Volumes getVolumes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volumes in chronological order. Returns a list of Volume objects.
+    *
+    * @param filter Filters that can be applied to the volumes that are returned
+    * @return {@link Volumes}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Volumes getVolumes( VolumeFilter filter ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all volumes in chronological order. Returns a list of Volume objects.
+    *
+    * @param filter Filters that can be applied to the volumes that are returned
+    * @param pageNo for pagination
+    * @return {@link Volumes}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Volumes getVolumes( VolumeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Redeploys all containers in the service with the current service configuration.
     *
     * @param service Service object with the UUID of the service to redeployed
@@ -868,64 +991,4 @@ public interface Tutum {
     * @since v1.0
     */
    NodeCluster upgradeDockerOnNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Method returns complete information for given volume group ID
-    *
-    * @param uuid the id of the volume group
-    * @return {@link VolumeGroup}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   VolumeGroup getVolumeGroup( String uuid ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
-    *
-    * @return {@link VolumeGroups}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    **/
-   VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
-    *
-    * @param filter Filters that can be applied to the volume group that are returned
-    * @return {@link VolumeGroups}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    **/
-   VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
-    *
-    * @param filter Filters that can be applied to the volume group that are returned
-    * @param pageNo for pagination
-    * @return {@link VolumeGroups}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    **/
-   VolumeGroups getVolumeGroups( VolumeGroupFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Lists all volume group in chronological order. Returns a list of Volume Group objects.
-    *
-    * @param pageNo for pagination
-    * @return {@link VolumeGroups}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    **/
-   VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 }

@@ -85,9 +85,12 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Token;
+import com.pennassurancesoftware.tutum.dto.Volume;
+import com.pennassurancesoftware.tutum.dto.VolumeFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
+import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
@@ -861,5 +864,33 @@ public class TutumClient implements Tutum {
    @Override
    public VolumeGroups getVolumeGroups( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       return getVolumeGroups( null, pageNo );
+   }
+
+   @Override
+   public Volume getVolume( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Volume )perform( new ApiRequest( ApiAction.GET_VOLUME, params ) ).getData();
+   }
+
+   @Override
+   public Volumes getVolumes() throws TutumException, RequestUnsuccessfulException {
+      return getVolumes( 1 );
+   }
+
+   @Override
+   public Volumes getVolumes( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumes( null, pageNo );
+   }
+
+   @Override
+   public Volumes getVolumes( VolumeFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getVolumes( filter, 1 );
+   }
+
+   @Override
+   public Volumes getVolumes( VolumeFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Volumes )perform( new ApiRequest( ApiAction.VOLUMES, getQueryParams( pageNo, filter ) ) ).getData();
    }
 }
