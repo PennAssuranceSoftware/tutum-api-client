@@ -64,6 +64,7 @@ import com.pennassurancesoftware.tutum.Tutum;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Logs;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusterFilter;
@@ -79,6 +80,9 @@ import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
+import com.pennassurancesoftware.tutum.dto.Service;
+import com.pennassurancesoftware.tutum.dto.Services;
+import com.pennassurancesoftware.tutum.dto.Token;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
@@ -145,10 +149,25 @@ public class TutumClient implements Tutum {
             || null == cluster.getName()
             || null == cluster.getRegion()
             || null == cluster.getNodeType() ) {
-         throw new IllegalArgumentException(
-               "Missing required parameters [Name, Region, Node Type] for create node cluster." );
+         throw new IllegalArgumentException( "Missing required parameters [Name, Region, Node Type] for create node cluster." );
       }
       return ( NodeCluster )perform( new ApiRequest( ApiAction.CREATE_NODECLUSTER, cluster ) ).getData();
+   }
+
+   @Override
+   public Service createService( Service service ) throws TutumException, RequestUnsuccessfulException {
+      if( null == service
+            || null == service.getImage()
+            || null == service.getName()
+            || null == service.getTargetNumContainers() ) {
+         throw new IllegalArgumentException( "Missing required parameters [Image, Name, Targe Number Of Containers] for create service." );
+      }
+      return ( Service )perform( new ApiRequest( ApiAction.CREATE_SERVICE, service ) ).getData();
+   }
+
+   @Override
+   public String createToken() throws TutumException, RequestUnsuccessfulException {
+      return ( ( Token )perform( new ApiRequest( ApiAction.CREATE_TOKEN, ( Object )null ) ).getData() ).getToken();
    }
 
    @Override
@@ -356,6 +375,27 @@ public class TutumClient implements Tutum {
       return ( Regions )perform( new ApiRequest( ApiAction.REGIONS, getQueryParams( pageNo, filter ) ) ).getData();
    }
 
+   @Override
+   public Services getServices() throws TutumException, RequestUnsuccessfulException {
+      return getServices( 1 );
+   }
+
+   @Override
+   public Services getServices( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException {
+      return getServices( filter, 1 );
+   }
+
+   @Override
+   public Services getServices( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      validatePageNo( pageNo );
+      return ( Services )perform( new ApiRequest( ApiAction.SERVICES, getQueryParams( pageNo, filter ) ) ).getData();
+   }
+
+   @Override
+   public Services getServices( Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+      return getServices( null, pageNo );
+   }
+
    /**
     * @param apiVersion the apiVersion to set
     */
@@ -537,7 +577,8 @@ public class TutumClient implements Tutum {
          LOG.error( "JSON Response: " + jsonStr );
 
          final JsonObject jsonObj = jsonParser.parse( jsonStr ).getAsJsonObject();
-         String errorMsg = String.format( "\nHTTP Status Code: %s\nError Message: %s", statusCode, jsonObj.get( "error" ).getAsString() );
+         final String message = jsonObj.has( "error" ) ? jsonObj.get( "error" ).getAsString() : jsonStr;
+         String errorMsg = String.format( "\nHTTP Status Code: %s\nError Message: %s", statusCode, message );
          LOG.debug( errorMsg );
          throw new TutumException( errorMsg, "N/A", statusCode );
       }
@@ -681,6 +722,18 @@ public class TutumClient implements Tutum {
 
    private void validatePageNo( Integer pageNo ) {
       checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
+   }
+
+   @Override
+   public Service getService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.GET_SERVICE, params ) ).getData();
+   }
+
+   @Override
+   public String getServiceLogs( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return ( ( Logs )perform( new ApiRequest( ApiAction.GET_LOGS, ( Object )null ) ).getData() ).getLogs();
    }
 
 }

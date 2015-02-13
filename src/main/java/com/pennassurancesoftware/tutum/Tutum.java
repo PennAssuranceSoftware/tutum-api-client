@@ -38,6 +38,9 @@ import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
+import com.pennassurancesoftware.tutum.dto.Service;
+import com.pennassurancesoftware.tutum.dto.Services;
+import com.pennassurancesoftware.tutum.dto.Token;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 
@@ -121,7 +124,45 @@ public interface Tutum {
     *
     * @since v1.0
     */
-   NodeCluster createNodeCluster( NodeCluster droplet ) throws TutumException, RequestUnsuccessfulException;
+   NodeCluster createNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * <p>
+    * Method allows you to create a new Service. See the required parameters section below for an
+    * explanation of the variables that are needed to create a new Service.
+    * </p>
+    * <p>
+    * Create a instance of {@link Service} class and populated the object appropriately.
+    * Minimum required values are -
+    * </p>
+    *
+    * <pre>
+    * {
+    *   "image": "tutum/hello-world",
+    *   "name": "my-new-app",
+    *   "target_num_containers": 2
+    * }
+    * </pre>
+    *
+    * @param service Object that will used to create the new service
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service createService( Service service ) throws TutumException, RequestUnsuccessfulException;;
+
+   /**
+    * A token allows authentication for agents running in Nodes.  Creates a new token.
+    *
+    * @return {@link Token}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   String createToken() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Deploys and provisions a recently created node in the specified region and cloud provider.
@@ -508,6 +549,78 @@ public interface Tutum {
     * @since v1.0
     **/
    Regions getRegions( RegionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given service ID
+    *
+    * @param uuid the id of the service
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service getService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns the logs for a specified service
+    *
+    * @param uuid the id of the service
+    * @return {@link String}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   String getServiceLogs( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all services in chronological order. Returns a list of Action objects.
+    *
+    * @return {@link Services}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Services getServices() throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all services in chronological order. Returns a list of Action objects.
+    *
+    * @param filter Filters that can be applied to the services that are returned
+    * @return {@link Services}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Services getServices( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all services in chronological order. Returns a list of Action objects.
+    *
+    * @param filter Filters that can be applied to the services that are returned
+    * @param pageNo for pagination
+    * @return {@link Services}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Services getServices( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all services in chronological order. Returns a list of Action objects.
+    *
+    * @param pageNo for pagination
+    * @return {@link Services}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Services getServices( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Terminates the specified node. For security reasons, only nodes with no running containers can be terminated,

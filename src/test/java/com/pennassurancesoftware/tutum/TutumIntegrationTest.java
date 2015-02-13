@@ -4,10 +4,9 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.Test;
 
 import com.pennassurancesoftware.tutum.client.TutumClient;
 import com.pennassurancesoftware.tutum.dto.Action;
@@ -23,18 +22,19 @@ import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.Regions;
+import com.pennassurancesoftware.tutum.dto.Service;
+import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Tag;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.util.IdUtils;
 
-@Ignore
 public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "" );
+   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testActions() throws Exception {
       final Actions actions = apiClient.getActions( 1 );
 
@@ -47,7 +47,7 @@ public class TutumIntegrationTest {
 
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testActionsWithFilter() throws Exception {
       final ActionFilter filter = new ActionFilter()
             .setEndDateLte( new Date() )
@@ -64,7 +64,7 @@ public class TutumIntegrationTest {
 
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testAction() throws Exception {
       final String actionid = "1d261569-7e17-4bf6-8987-6574de7bdd12";
       final Action action = apiClient.getAction( actionid );
@@ -73,7 +73,7 @@ public class TutumIntegrationTest {
       LOG.info( action.toString() );
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testProviders() throws Exception {
       final Providers providers = apiClient.getProviders( 1 );
 
@@ -85,7 +85,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testProvider() throws Exception {
       final String providerName = "digitalocean";
       final Provider provider = apiClient.getProvider( providerName );
@@ -94,7 +94,7 @@ public class TutumIntegrationTest {
       LOG.info( provider.toString() );
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testRegions() throws Exception {
       final Regions regions = apiClient.getRegions( 1 );
 
@@ -106,7 +106,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testRegion() throws Exception {
       final String providerName = "digitalocean";
       final String regionName = "sgp1";
@@ -116,7 +116,7 @@ public class TutumIntegrationTest {
       LOG.info( region.toString() );
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testNodeTypes() throws Exception {
       final NodeTypes nodeTypes = apiClient.getNodeTypes( 1 );
 
@@ -128,7 +128,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testNodeType() throws Exception {
       final String providerName = "digitalocean";
       final String nodeTypeName = "32gb";
@@ -138,7 +138,44 @@ public class TutumIntegrationTest {
       LOG.info( nodeType.toString() );
    }
 
-   // @Test
+   @Test(groups = { "integration" }, enabled = false)
+   public void testToken() throws Exception {
+      final String token = apiClient.createToken();
+
+      Assert.assertNotNull( token );
+      LOG.info( token.toString() );
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testServices() throws Exception {
+      final Services services = apiClient.getServices();
+
+      Assert.assertNotNull( services );
+      Assert.assertTrue( ( services.getObjects().size() > 0 ) );
+
+      for( Service service : services.getObjects() ) {
+         LOG.info( service.toString() );
+      }
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testCreateService() throws Exception {
+      final Service create = new Service();
+      create.setName( "hello-world" );
+      create.setImage( "tutum/hello-world" );
+      create.setTargetNumContainers( 1 );
+
+      final Service service = apiClient.createService( create );
+
+      Assert.assertNotNull( service );
+      LOG.info( service.toString() );
+      
+      final Service existing = apiClient.getService( service.getUuid() );
+      Assert.assertNotNull( existing );
+      LOG.info( existing.toString() );
+   }
+
+   @Test(groups = { "integration" }, enabled = false)
    public void testNodeClusters() throws Exception {
       // Create
       final NodeCluster create = new NodeCluster();
@@ -204,7 +241,7 @@ public class TutumIntegrationTest {
       LOG.info( "Cluster After Terminate: {}", current );
    }
 
-   // @Test
+   @Test(groups = { "integration" }, enabled = false)
    public void testNodes() throws Exception {
       final String clusterName = "cluster-" + IdUtils.smallRandom();
       // final String nodeName = "node-" + IdUtils.smallRandom();

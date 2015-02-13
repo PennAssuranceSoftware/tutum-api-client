@@ -101,7 +101,7 @@ public class ApiRequest {
       this.apiAction = apiAction;
       this.data = data;
       this.params = params;
-      this.queryParams = queryParams;
+      this.queryParams = queryParams != null ? queryParams : new HashMap<String, List<String>>();
    }
 
    public String getPath() {

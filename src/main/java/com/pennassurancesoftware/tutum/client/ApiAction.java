@@ -22,6 +22,7 @@ package com.pennassurancesoftware.tutum.client;
 
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Logs;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusters;
@@ -32,6 +33,9 @@ import com.pennassurancesoftware.tutum.dto.Provider;
 import com.pennassurancesoftware.tutum.dto.Providers;
 import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.Regions;
+import com.pennassurancesoftware.tutum.dto.Service;
+import com.pennassurancesoftware.tutum.dto.Services;
+import com.pennassurancesoftware.tutum.dto.Token;
 
 /**
  * Enumeration of Tutum RESTful resource information.
@@ -59,9 +63,12 @@ public enum ApiAction {
    UPDATE_NODE("/node/%s/", RequestMethod.PATCH, Node.class),
    UPGRADE_DOCKER_NODE("/node/%s/docker-upgrade/", RequestMethod.POST, Node.class),
    TERMINATE_NODE("/node/%s/", RequestMethod.DELETE, Node.class),
+   CREATE_TOKEN("/token/", RequestMethod.POST, Token.class),
+   SERVICES("/service", RequestMethod.GET, Services.class),
+   CREATE_SERVICE("/service/", RequestMethod.POST, Service.class),
+   GET_SERVICE("/service/%s", RequestMethod.GET, Service.class),
+   GET_LOGS("/service/%s/logs/", RequestMethod.GET, Logs.class),
 
-   
-   
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),
    //  GET_DROPLET_BACKUPS("/droplets/%s/backups", "backups", RequestMethod.GET, Backups.class),  
