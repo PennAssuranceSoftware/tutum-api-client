@@ -11,7 +11,7 @@
     <artifactId>tutum-api-client</artifactId>
     <packaging>jar</packaging>
     <name>Tutum API Client in Java</name>
-    <version>1.00.00-SNAPSHOT</version>
+    <version>1.00.00</version>
     <description>Tutum API Client in Java</description>
     <url>http://pennassurancesoftware.com</url>
     <licenses>
