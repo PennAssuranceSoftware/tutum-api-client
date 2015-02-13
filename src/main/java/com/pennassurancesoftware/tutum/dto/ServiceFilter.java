@@ -1,12 +1,16 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
 import com.pennassurancesoftware.tutum.type.ServiceState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 
-public class ServiceFilter {
+public class ServiceFilter implements Serializable {
+   private static final long serialVersionUID = -8720021041588480155L;
+
    private String name;
    private String state;
    @SerializedName("unique_name")

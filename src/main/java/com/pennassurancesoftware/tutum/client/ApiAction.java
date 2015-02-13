@@ -22,6 +22,8 @@ package com.pennassurancesoftware.tutum.client;
 
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Container;
+import com.pennassurancesoftware.tutum.dto.Containers;
 import com.pennassurancesoftware.tutum.dto.Logs;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
@@ -67,82 +69,18 @@ public enum ApiAction {
    SERVICES("/service", RequestMethod.GET, Services.class),
    CREATE_SERVICE("/service/", RequestMethod.POST, Service.class),
    GET_SERVICE("/service/%s", RequestMethod.GET, Service.class),
-   GET_LOGS("/service/%s/logs/", RequestMethod.GET, Logs.class),
+   GET_SERVICE_LOGS("/service/%s/logs/", RequestMethod.GET, Logs.class),
    UPDATE_SERVICE("/service/%s/", RequestMethod.PATCH, Service.class),
    START_SERVICE("/service/%s/start/", RequestMethod.POST, Service.class),
    STOP_SERVICE("/service/%s/stop/", RequestMethod.POST, Service.class),
    REDEPLOY_SERVICE("/service/%s/redeploy/", RequestMethod.POST, Service.class),
    TERMINATE_SERVICE("/service/%s/", RequestMethod.DELETE, Service.class),
-
-   //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
-   //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),
-   //  GET_DROPLET_BACKUPS("/droplets/%s/backups", "backups", RequestMethod.GET, Backups.class),  
-   //  GET_DROPLET_INFO("/droplets/%s", "droplet", RequestMethod.GET, Droplet.class),  
-   //  CREATE_DROPLET("/droplets", "droplet", RequestMethod.POST, Droplet.class),
-   //  DELETE_DROPLET("/droplets/%s", "delete", RequestMethod.DELETE, Delete.class),
-   //  REBOOT_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  POWER_CYCLE_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  SHUTDOWN_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  POWER_OFF_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  POWER_ON_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class), 
-   //  RESET_DROPLET_PASSWORD("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  RESIZE_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  RESTORE_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  REBUILD_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  RENAME_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  CHANGE_DROPLET_KERNEL("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  ENABLE_DROPLET_IPV6("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  DISABLE_DROPLET_BACKUPS("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  ENABLE_DROPLET_PRIVATE_NETWORKING("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  SNAPSHOT_DROPLET("/droplets/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  
-   //  
-   //  // Action
-   //  AVAILABLE_ACTIONS("/actions", "actions", RequestMethod.GET, Actions.class),
-   //  GET_ACTION_INFO("/actions/%s", "action", RequestMethod.GET, Action.class),
-   //  GET_DROPLET_ACTIONS("/droplets/%s/actions", "actions", RequestMethod.GET, Actions.class),
-   //  GET_IMAGE_ACTIONS("/images/%s/actions", "actions", RequestMethod.GET, Actions.class),
-   //  
-   //  
-   //  // Image
-   //  AVAILABLE_IMAGES("/images", "images", RequestMethod.GET, Images.class),  
-   //  GET_IMAGE_INFO("/images/%s", "image", RequestMethod.GET, Image.class),  
-   //  UPDATE_IMAGE_INFO("/images/%s", "image", RequestMethod.PUT, Image.class),
-   //  DELETE_IMAGE("/images/%s", "delete", RequestMethod.DELETE, Delete.class),
-   //  TRANSFER_IMAGE("/images/%s/actions", "action", RequestMethod.POST, Action.class),
-   //  
-   //  
-   //  // Region
-   //  AVAILABLE_REGIONS("/regions", "regions", RequestMethod.GET, Regions.class),
-   //  
-   //  
-   //  // Size
-   //  AVAILABLE_SIZES("/sizes", "sizes", RequestMethod.GET, Sizes.class),
-   //  
-   //  
-   //  // Domain
-   //  AVAILABLE_DOMAINS("/domains", "domains", RequestMethod.GET, Domains.class),
-   //  GET_DOMAIN_INFO("/domains/%s", "domain", RequestMethod.GET, Domain.class),
-   //  CREATE_DOMAIN("/domains", "domain", RequestMethod.POST, Domain.class),  
-   //  DELETE_DOMAIN("/domains/%s", "delete", RequestMethod.DELETE, Delete.class),
-   //  
-   //  
-   //  // Domain Record
-   //  GET_DOMAIN_RECORDS("/domains/%s/records", "domain_records", RequestMethod.GET, DomainRecords.class),
-   //  GET_DOMAIN_RECORD_INFO("/domains/%s/records/%s", "domain_record", RequestMethod.GET, DomainRecord.class),
-   //  CREATE_DOMAIN_RECORD("/domains/%s/records", "domain_record", RequestMethod.POST, DomainRecord.class),  
-   //  UPDATE_DOMAIN_RECORD("/domains/%s/records/%s", "domain_record", RequestMethod.PUT, DomainRecord.class),
-   //  DELETE_DOMAIN_RECORD("/domains/%s/records/%s", "delete", RequestMethod.DELETE, Delete.class),
-   //  
-   //  
-   //  // Key
-   //  AVAILABLE_KEYS("/account/keys", "ssh_keys", RequestMethod.GET, Keys.class),
-   //  GET_KEY_INFO("/account/keys/%s", "ssh_key", RequestMethod.GET, Key.class),
-   //  CREATE_KEY("/account/keys", "ssh_key", RequestMethod.POST, Key.class),  
-   //  UPDATE_KEY("/account/keys/%s", "ssh_key", RequestMethod.PUT, Key.class),
-   //  DELETE_KEY("/account/keys/%s", "delete", RequestMethod.DELETE, Delete.class);
-
-   ;
+   CONTAINERS("/container", RequestMethod.GET, Containers.class),
+   GET_CONTAINER("/container/%s", RequestMethod.GET, Container.class),
+   GET_CONTAINER_LOGS("/container/%s/logs/", RequestMethod.GET, Logs.class),
+   START_CONTAINER("/container/%s/start/", RequestMethod.POST, Container.class),
+   STOP_CONTAINER("/container/%s/stop/", RequestMethod.POST, Container.class),
+   TERMINATE_CONTAINER("/container/%s/", RequestMethod.DELETE, Container.class), ;
 
    private String path;
 

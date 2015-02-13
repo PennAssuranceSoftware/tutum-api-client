@@ -24,7 +24,7 @@ package com.pennassurancesoftware.tutum.exception;
  * <code>RequestUnsuccessfulException</code> will be thrown if any RESTful request unsuccessful
  * from wrapper method
  */
-public class RequestUnsuccessfulException extends Exception {
+public class RequestUnsuccessfulException extends RuntimeException {
 
    private static final long serialVersionUID = 6949447731150358499L;
 

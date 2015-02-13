@@ -1,5 +1,8 @@
 package com.pennassurancesoftware.tutum;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.Arrays;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -12,6 +15,8 @@ import com.pennassurancesoftware.tutum.client.TutumClient;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Container;
+import com.pennassurancesoftware.tutum.dto.Containers;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusters;
@@ -25,6 +30,7 @@ import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Tag;
+import com.pennassurancesoftware.tutum.type.ContainerState;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.type.ServiceState;
 import com.pennassurancesoftware.tutum.util.IdUtils;
@@ -147,7 +153,7 @@ public class TutumIntegrationTest {
       LOG.info( token.toString() );
    }
 
-   @Test(groups = { "integration" }, enabled = true)
+   @Test(groups = { "integration" }, enabled = false)
    public void testServices() throws Exception {
       final Services services = apiClient.getServices();
 
@@ -160,6 +166,84 @@ public class TutumIntegrationTest {
    }
 
    @Test(groups = { "integration" }, enabled = true)
+   public void testContainers() throws Exception {
+      final Containers containers = apiClient.getContainers();
+
+      Assert.assertNotNull( containers );
+      Assert.assertTrue( ( containers.getObjects().size() > 0 ) );
+
+      for( Container container : containers.getObjects() ) {
+         LOG.info( container.toString() );
+
+         final Container current = apiClient.getContainer( container.getUuid() );
+         Assert.assertNotNull( current );
+
+         final String logs = apiClient.getContainerLogs( current.getUuid() );
+         LOG.info( "==================================================" );
+         LOG.info( "Container {} Logs", current.getName() );
+         LOG.info( "==================================================" );
+         final BufferedReader br = new BufferedReader( new StringReader( logs ) );
+         String line;
+         while( ( line = br.readLine() ) != null ) {
+            LOG.info( line );
+         }
+
+         stop( current );
+         start( current );
+         stop( current );
+         terminate( current );
+      }
+   }
+
+   private void terminate( Container container ) {
+      LOG.info( "Terminate Container: {}", container.getName() );
+      Container current = apiClient.getContainer( container.getUuid() );
+      while( Arrays.asList( ContainerState.Starting, ContainerState.Stopping, ContainerState.Terminating ).contains( current.getState() ) ) {
+         LOG.info( "Container: {} State: {}", current.getName(), current.getState().value() );
+         waitFor( 2000 );
+         current = apiClient.getContainer( container.getUuid() );
+      }
+      if( !ContainerState.Terminated.equals( current.getState() ) ) {
+         apiClient.terminateContainer( container.getUuid() );
+      }
+   }
+
+   private void start( Container container ) {
+      LOG.info( "Start Container: {}", container.getName() );
+      Container current = apiClient.getContainer( container.getUuid() );
+      while( ContainerState.Stopping.equals( current.getState() ) ) {
+         LOG.info( "Container: {} State: {}", current.getName(), current.getState().value() );
+         waitFor( 2000 );
+         current = apiClient.getContainer( container.getUuid() );
+      }
+      if( Arrays.asList( ContainerState.Init, ContainerState.Stopped ).contains( current.getState() ) ) {
+         apiClient.startContainer( current.getUuid() );
+      }
+   }
+
+   private void stop( Container container ) {
+      LOG.info( "Stop Container: {}", container.getName() );
+      Container current = apiClient.getContainer( container.getUuid() );
+      while( ContainerState.Starting.equals( current.getState() ) ) {
+         LOG.info( "Container: {} State: {}", current.getName(), current.getState().value() );
+         waitFor( 2000 );
+         current = apiClient.getContainer( container.getUuid() );
+      }
+      if( ContainerState.Running.equals( current.getState() ) ) {
+         apiClient.stopContainer( current.getUuid() );
+      }
+   }
+
+   private void waitFor( Integer mili ) {
+      try {
+         Thread.sleep( mili );
+      }
+      catch( Exception exception ) {
+         throw new RuntimeException( "Error sleeping", exception );
+      }
+   }
+
+   @Test(groups = { "integration" }, enabled = false)
    public void testCreateService() throws Exception {
       final Service create = new Service();
       create.setName( "hello-world-" + IdUtils.smallRandom() );

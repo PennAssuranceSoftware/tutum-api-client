@@ -25,7 +25,7 @@ package com.pennassurancesoftware.tutum.exception;
  * <code>HTTP status
  * code >= 400 && < 510</code>] Tutum API
  */
-public class TutumException extends Exception {
+public class TutumException extends RuntimeException {
    static final long serialVersionUID = -925220451573356906L;
 
    private String id;

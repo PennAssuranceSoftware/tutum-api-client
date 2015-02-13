@@ -1,12 +1,15 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class NodeTypeFilter {
+public class NodeTypeFilter implements Serializable {
+   private static final long serialVersionUID = 5403973179024666700L;
+
    private String name;
    private List<String> regions = new ArrayList<String>();
 

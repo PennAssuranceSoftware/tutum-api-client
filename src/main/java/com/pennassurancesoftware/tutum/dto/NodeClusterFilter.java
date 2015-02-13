@@ -1,12 +1,16 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder.QueryParamName;
 
-public class NodeClusterFilter {
+public class NodeClusterFilter implements Serializable {
+   private static final long serialVersionUID = -4075031290562702032L;
+   
    private String name;
    @QueryParamName("node_type")
    private String nodeType;

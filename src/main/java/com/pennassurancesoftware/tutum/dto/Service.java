@@ -1,5 +1,6 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,140 +15,16 @@ import com.pennassurancesoftware.tutum.type.DeploymentStrategyType;
 import com.pennassurancesoftware.tutum.type.ServiceState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 
-public class Service {
-   public static class Binding {
-      @SerializedName("container_path")
-      private String containerPath;
+public class Service implements Serializable {
+   private static final long serialVersionUID = -5254444978757549427L;
 
-      @SerializedName("host_path")
-      private String hostPath;
-
-      private Boolean rewritable;
-
-      @SerializedName("volumes_from")
-      private String volumesFrom;
-
-      public String getContainerPath() {
-         return containerPath;
-      }
-
-      public String getHostPath() {
-         return hostPath;
-      }
-
-      public Boolean getRewritable() {
-         return rewritable;
-      }
-
-      public String getVolumesFrom() {
-         return volumesFrom;
-      }
-
-      public void setContainerPath( String containerPath ) {
-         this.containerPath = containerPath;
-      }
-
-      public void setHostPath( String hostPath ) {
-         this.hostPath = hostPath;
-      }
-
-      public void setRewritable( Boolean rewritable ) {
-         this.rewritable = rewritable;
-      }
-
-      public void setVolumesFrom( String volumesFrom ) {
-         this.volumesFrom = volumesFrom;
-      }
-
-      @Override
-      public String toString() {
-         return ReflectionToStringBuilder.toString( this );
-      }
+   public static class Port extends AbstractPort implements Serializable {
+      private static final long serialVersionUID = -6442666801663425212L;
    }
 
-   public static class EnvironmentVariable {
-      private String key;
-      private String value;
+   public static class RelatedService implements Serializable {
+      private static final long serialVersionUID = 5570440107236960416L;
 
-      public String getKey() {
-         return key;
-      }
-
-      public String getValue() {
-         return value;
-      }
-
-      public void setKey( String key ) {
-         this.key = key;
-      }
-
-      public void setValue( String value ) {
-         this.value = value;
-      }
-
-      @Override
-      public String toString() {
-         return ReflectionToStringBuilder.toString( this );
-      }
-   }
-
-   public static class Port {
-      @SerializedName("inner_port")
-      private Integer innerPort;
-      @SerializedName("outer_port")
-      private Integer outerPort;
-      @SerializedName("port_name")
-      private String portName;
-      private String protocol;
-      private Boolean published;
-
-      public Integer getInnerPort() {
-         return innerPort;
-      }
-
-      public Integer getOuterPort() {
-         return outerPort;
-      }
-
-      public String getPortName() {
-         return portName;
-      }
-
-      public String getProtocol() {
-         return protocol;
-      }
-
-      public Boolean getPublished() {
-         return published;
-      }
-
-      public void setInnerPort( Integer innerPort ) {
-         this.innerPort = innerPort;
-      }
-
-      public void setOuterPort( Integer outerPort ) {
-         this.outerPort = outerPort;
-      }
-
-      public void setPortName( String portName ) {
-         this.portName = portName;
-      }
-
-      public void setProtocol( String protocol ) {
-         this.protocol = protocol;
-      }
-
-      public void setPublished( Boolean published ) {
-         this.published = published;
-      }
-
-      @Override
-      public String toString() {
-         return ReflectionToStringBuilder.toString( this );
-      }
-   }
-
-   public static class RelatedService {
       @SerializedName("from_service")
       private String fromService;
       private String name;

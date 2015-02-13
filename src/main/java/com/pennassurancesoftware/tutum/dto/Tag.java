@@ -1,11 +1,15 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tag {
+public class Tag implements Serializable {
+   private static final long serialVersionUID = -5302871480947318446L;
+
    @Expose
    private String name;
    @Expose
@@ -38,7 +42,7 @@ public class Tag {
    public void setResourceUri( String resourceUri ) {
       this.resourceUri = resourceUri;
    }
-   
+
    @Override
    public String toString() {
       return ReflectionToStringBuilder.toString( this );

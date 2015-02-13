@@ -1,8 +1,12 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class RegionFilter {
+public class RegionFilter implements Serializable {
+   private static final long serialVersionUID = 6282535116012940959L;
+
    private String name;
    private String provider;
 

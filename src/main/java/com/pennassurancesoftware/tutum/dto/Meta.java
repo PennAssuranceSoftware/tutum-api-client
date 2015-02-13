@@ -20,6 +20,8 @@
  */
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
@@ -27,10 +29,11 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Represents Meta attributes
  *
- * @since v2.0
+ * @since v1.0
  */
-public class Meta {
-
+public class Meta implements Serializable {
+   private static final long serialVersionUID = -1915567012431554421L;
+   
    private Integer limit;
    private String next;
    private Integer offset;

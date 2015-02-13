@@ -1,5 +1,6 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -8,7 +9,9 @@ import com.pennassurancesoftware.tutum.type.ActionState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder.QueryParamName;
 
-public class ActionFilter {
+public class ActionFilter implements Serializable {
+   private static final long serialVersionUID = 1392095196448989225L;
+   
    @QueryParamName("end_date__gte")
    private Date endDateGte;
    @QueryParamName("end_date__lte")

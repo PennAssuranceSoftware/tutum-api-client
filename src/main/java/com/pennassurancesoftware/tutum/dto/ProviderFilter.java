@@ -1,8 +1,12 @@
 package com.pennassurancesoftware.tutum.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class ProviderFilter {
+public class ProviderFilter implements Serializable {
+   private static final long serialVersionUID = 5193158412457859370L;
+
    private String name;
 
    public String getName() {

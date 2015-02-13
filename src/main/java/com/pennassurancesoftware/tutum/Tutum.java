@@ -23,6 +23,8 @@ package com.pennassurancesoftware.tutum;
 import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
+import com.pennassurancesoftware.tutum.dto.Container;
+import com.pennassurancesoftware.tutum.dto.Containers;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusterFilter;
@@ -755,4 +757,112 @@ public interface Tutum {
     * @since v1.0
     */
    NodeCluster upgradeDockerOnNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers() throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @param filter Filters that can be applied to the containers that are returned
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @param filter Filters that can be applied to the containers that are returned
+    * @param pageNo for pagination
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all containers in chronological order. Returns a list of Action objects.
+    *
+    * @param pageNo for pagination
+    * @return {@link Containers}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   Containers getContainers( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns complete information for given container ID
+    *
+    * @param uuid the id of the container
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container getContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Method returns the logs for a specified container
+    *
+    * @param uuid the id of the container
+    * @return {@link String}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   String getContainerLogs( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Starts a stopped container.
+    *
+    * @param container Container object with the UUID of the container to start
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container startContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Stops a running container.
+    *
+    * @param container Container object with the UUID of the container to stop
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container stopContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Terminates the specified container. This is not reversible. All data stored in the container will be permanently deleted.
+    *
+    * @param container Container object with the UUID of the container to terminated
+    * @return {@link Container}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Container terminateContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
 }
