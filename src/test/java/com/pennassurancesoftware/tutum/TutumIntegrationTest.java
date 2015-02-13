@@ -161,7 +161,7 @@ public class TutumIntegrationTest {
    @Test(groups = { "integration" }, enabled = true)
    public void testCreateService() throws Exception {
       final Service create = new Service();
-      create.setName( "hello-world" );
+      create.setName( "hello-world-" + IdUtils.smallRandom() );
       create.setImage( "tutum/hello-world" );
       create.setTargetNumContainers( 1 );
 
@@ -169,10 +169,19 @@ public class TutumIntegrationTest {
 
       Assert.assertNotNull( service );
       LOG.info( service.toString() );
-      
+
       final Service existing = apiClient.getService( service.getUuid() );
       Assert.assertNotNull( existing );
       LOG.info( existing.toString() );
+
+      existing.getTags().add( new Tag( "hello" ) );
+      final Service updated = apiClient.updateService( existing );
+      Assert.assertNotNull( updated );
+      LOG.info( updated.toString() );
+
+      final Service started = apiClient.startService( existing.getUuid() );
+      Assert.assertNotNull( started );
+      LOG.info( started.toString() );
    }
 
    @Test(groups = { "integration" }, enabled = false)

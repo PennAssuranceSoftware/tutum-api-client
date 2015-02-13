@@ -672,6 +672,30 @@ public interface Tutum {
    NodeCluster updateNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Updates the service details and applies the changes automatically.
+    *
+    * @param service Service object with the UUID of the service to update set
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service updateService( Service service ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Starts all containers in a stopped or partly running service.
+    *
+    * @param service Service object with the UUID of the service to start
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Upgrades the docker daemon of the node. This will restart your containers on that node.
     *
     * @param uuid the id of the node

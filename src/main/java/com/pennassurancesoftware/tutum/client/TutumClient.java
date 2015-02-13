@@ -376,6 +376,18 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Service getService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.GET_SERVICE, params ) ).getData();
+   }
+
+   @Override
+   public String getServiceLogs( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return ( ( Logs )perform( new ApiRequest( ApiAction.GET_LOGS, ( Object )null ) ).getData() ).getLogs();
+   }
+
+   @Override
    public Services getServices() throws TutumException, RequestUnsuccessfulException {
       return getServices( 1 );
    }
@@ -418,6 +430,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.START_SERVICE, ( Object )null, params ) ).getData();
+   }
+
+   @Override
    public Node terminateNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -443,6 +462,13 @@ public class TutumClient implements Tutum {
       checkNullAndThrowError( cluster.getUuid(), "Missing required parameter - UUID." );
       final Object[] params = { cluster.getUuid() };
       return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, params ) ).getData();
+   }
+
+   @Override
+   public Service updateService( Service service ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( service.getUuid(), "Missing required parameter - UUID." );
+      final Object[] params = { service.getUuid() };
+      return ( Service )perform( new ApiRequest( ApiAction.UPDATE_SERVICE, params ) ).getData();
    }
 
    @Override
@@ -574,6 +600,7 @@ public class TutumClient implements Tutum {
 
       if( ( statusCode >= 400 && statusCode < 510 ) ) {
          String jsonStr = httpResponseToString( httpResponse );
+         jsonStr = jsonStr == null || "".equals( jsonStr ) ? "{}" : jsonStr;
          LOG.error( "JSON Response: " + jsonStr );
 
          final JsonObject jsonObj = jsonParser.parse( jsonStr ).getAsJsonObject();
@@ -722,18 +749,6 @@ public class TutumClient implements Tutum {
 
    private void validatePageNo( Integer pageNo ) {
       checkNullAndThrowError( pageNo, "Missing required parameter - pageNo." );
-   }
-
-   @Override
-   public Service getService( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
-      final Object[] params = { uuid };
-      return ( Service )perform( new ApiRequest( ApiAction.GET_SERVICE, params ) ).getData();
-   }
-
-   @Override
-   public String getServiceLogs( String uuid ) throws TutumException, RequestUnsuccessfulException {
-      return ( ( Logs )perform( new ApiRequest( ApiAction.GET_LOGS, ( Object )null ) ).getData() ).getLogs();
    }
 
 }

@@ -68,6 +68,8 @@ public enum ApiAction {
    CREATE_SERVICE("/service/", RequestMethod.POST, Service.class),
    GET_SERVICE("/service/%s", RequestMethod.GET, Service.class),
    GET_LOGS("/service/%s/logs/", RequestMethod.GET, Logs.class),
+   UPDATE_SERVICE("/service/%s/", RequestMethod.PATCH, Service.class),
+   START_SERVICE("/service/%s/start/", RequestMethod.POST, Service.class),
 
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),
