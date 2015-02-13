@@ -623,6 +623,42 @@ public interface Tutum {
    Services getServices( Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Redeploys all containers in the service with the current service configuration.
+    *
+    * @param service Service object with the UUID of the service to redeployed
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service redeployService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Starts all containers in a stopped or partly running service.
+    *
+    * @param service Service object with the UUID of the service to start
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Stops all containers in a running or partly running service.
+    *
+    * @param service Service object with the UUID of the service to stop
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service stopService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Terminates the specified node. For security reasons, only nodes with no running containers can be terminated,
     * otherwise the API call will fail.
     *
@@ -646,6 +682,19 @@ public interface Tutum {
     * @since v1.0
     */
    NodeCluster terminateNodeCluster( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Terminate all the containers in a service and the service itself.
+    * This is not reversible. All the data stored in all containers of the service will be permanently deleted.
+    *
+    * @param service Service object with the UUID of the service to terminated
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service terminateService( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Replaces the old tags in the node for the new list provided.
@@ -682,18 +731,6 @@ public interface Tutum {
     * @since v1.0
     */
    Service updateService( Service service ) throws TutumException, RequestUnsuccessfulException;
-
-   /**
-    * Starts all containers in a stopped or partly running service.
-    *
-    * @param service Service object with the UUID of the service to start
-    * @return {@link Service}
-    * @throws TutumException
-    * @throws RequestUnsuccessfulException
-    *
-    * @since v1.0
-    */
-   Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Upgrades the docker daemon of the node. This will restart your containers on that node.

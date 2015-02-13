@@ -26,6 +26,7 @@ import com.pennassurancesoftware.tutum.dto.Service;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Tag;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
+import com.pennassurancesoftware.tutum.type.ServiceState;
 import com.pennassurancesoftware.tutum.util.IdUtils;
 
 public class TutumIntegrationTest {
@@ -182,6 +183,30 @@ public class TutumIntegrationTest {
       final Service started = apiClient.startService( existing.getUuid() );
       Assert.assertNotNull( started );
       LOG.info( started.toString() );
+
+      Service current = apiClient.getService( existing.getUuid() );
+      while( !ServiceState.Running.equals( current.getState() ) ) {
+         LOG.info( "Service: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getService( existing.getUuid() );
+      }
+      apiClient.stopService( current.getUuid() );
+
+      current = apiClient.getService( existing.getUuid() );
+      while( !ServiceState.Stopped.equals( current.getState() ) ) {
+         LOG.info( "Service: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getService( existing.getUuid() );
+      }
+      apiClient.redeployService( current.getUuid() );
+
+      current = apiClient.getService( existing.getUuid() );
+      while( ServiceState.Redeploying.equals( current.getState() ) ) {
+         LOG.info( "Service: {} State: {}", current.getName(), current.getState().value() );
+         Thread.sleep( 2000 );
+         current = apiClient.getService( existing.getUuid() );
+      }
+      apiClient.terminateService( current.getUuid() );
    }
 
    @Test(groups = { "integration" }, enabled = false)

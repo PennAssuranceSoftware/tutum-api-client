@@ -70,6 +70,9 @@ public enum ApiAction {
    GET_LOGS("/service/%s/logs/", RequestMethod.GET, Logs.class),
    UPDATE_SERVICE("/service/%s/", RequestMethod.PATCH, Service.class),
    START_SERVICE("/service/%s/start/", RequestMethod.POST, Service.class),
+   STOP_SERVICE("/service/%s/stop/", RequestMethod.POST, Service.class),
+   REDEPLOY_SERVICE("/service/%s/redeploy/", RequestMethod.POST, Service.class),
+   TERMINATE_SERVICE("/service/%s/", RequestMethod.DELETE, Service.class),
 
    //  AVAILABLE_DROPLETS_KERNELS("/droplets/%s/kernels", "kernels", RequestMethod.GET, Kernels.class),
    //  GET_DROPLET_SNAPSHOTS("/droplets/%s/snapshots", "snapshots", RequestMethod.GET, Snapshots.class),

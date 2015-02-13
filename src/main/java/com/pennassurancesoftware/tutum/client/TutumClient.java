@@ -408,6 +408,13 @@ public class TutumClient implements Tutum {
       return getServices( null, pageNo );
    }
 
+   @Override
+   public Service redeployService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.REDEPLOY_SERVICE, ( Object )null, params ) ).getData();
+   }
+
    /**
     * @param apiVersion the apiVersion to set
     */
@@ -437,6 +444,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Service stopService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.STOP_SERVICE, ( Object )null, params ) ).getData();
+   }
+
+   @Override
    public Node terminateNode( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -448,6 +462,13 @@ public class TutumClient implements Tutum {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
       return ( NodeCluster )perform( new ApiRequest( ApiAction.TERMINATE_NODECLUSTER, params ) ).getData();
+   }
+
+   @Override
+   public Service terminateService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.TERMINATE_SERVICE, params ) ).getData();
    }
 
    @Override
