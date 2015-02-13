@@ -15,16 +15,16 @@ Tutum API Client library per version project dependencies:
     <pre>&lt;dependency>
             &lt;groupId>com.pennassurancesoftware.tutum&lt;/groupId>
             &lt;artifactId>tutum-api-client&lt;/artifactId>
-            &lt;version>1.00.00-SNAPSHOT&lt;/version>
+            &lt;version>1.00.00&lt;/version>
         &lt;/dependency></pre>
     * Grails dependency
-    <pre>compile 'com.pennassurancesoftware.tutum:tutum-api-client:1.0-SNAPSHOT'</pre>
+    <pre>compile 'com.pennassurancesoftware.tutum:tutum-api-client:1.00.00'</pre>
     * Groovy Grape
     <pre>@Grapes( 
-@Grab(group='com.pennassurancesoftware.tutum', module='tutum-api-client', version='1.0-SNAPSHOT') 
+@Grab(group='com.pennassurancesoftware.tutum', module='tutum-api-client', version='1.00.00') 
 )</pre>
     * Scala SBT
-    <pre>libraryDependencies += "com.pennassurancesoftware.tutum" % "tutum-api-client" % "1.0-SNAPSHOT"</pre>
+    <pre>libraryDependencies += "com.pennassurancesoftware.tutum" % "tutum-api-client" % "1.00.00"</pre>
 
 * * *
 
@@ -42,43 +42,19 @@ Tutum apiClient = new TutumClient("v2", authToken, httpClient);
 </pre>
 
 * Let's invoke the method(s) as per need via <code>apiClient</code>
-<pre>// Fetching all the available droplets from control panel 
-Droplets droplets = apiClient.getAvailableDroplets(pageNo);</pre>
-<pre>// Fetching all the available kernels for droplet
-Kernels kernels = apiClient.getAvailableKernels(dropletId, pageNo);</pre>
-<pre>// Create a new droplet
-Droplet newDroplet = new Droplet();
-newDroplet.setName("api-client-test-host");
-newDroplet.setSize(new Size("512mb")); // setting size by slug value
-newDroplet.setRegion(new Region("sgp1")); // setting region by slug value; sgp1 => Singapore 1 Data center
-newDroplet.setImage(new Image(1601)); // setting by Image Id 1601 => centos-5-8-x64 also available in image slug value
-newDroplet.setEnableBackup(Boolean.TRUE);
-newDroplet.setEnableIpv6(Boolean.TRUE);
-newDroplet.setEnablePrivateNetworking(Boolean.TRUE);
-// Adding SSH key info
-List&lt;Key> keys = new ArrayList&lt;Key>();
-keys.add(new Key(6536653));
-keys.add(new Key(6536654));
-newDroplet.setKeys(keys);
-// Adding Metadata API - User Data
-newDroplet.setUserData(" &lt; YAML Content > "); // Follow Tutum documentation to prepare user_data value
-Droplet droplet = apiClient.createDroplet(newDroplet);</pre> 
-<pre>// Fetch droplet information 
-Droplet droplet = apiClient.getDropletInfo(dropletId);</pre> 
-<pre>// Fetch Available Plans/Sizes supported by Tutum
-Sizes sizes = apiClient.getAvailableSizes(pageNo);</pre> 
-<pre>// Fetch Available Regions supported by Tutum
-Sizes sizes = apiClient.getAvailableRegions(pageNo);</pre>
-
-* Accessing <code>RateLimit</code> header values in the return object
-<pre>Droplets droplets = getAvailableDroplets(1);
-RateLimit rateLimit = droplets.getRateLimit();</pre>
-<pre>Actions actions = getAvailableActions(2);
-RateLimit rateLimit = actions.getRateLimit();</pre>
-<pre>Domain domain = getDomainInfo("myjeeva.com");
-RateLimit rateLimit = domain.getRateLimit();</pre>
-<pre>Droplet droplet = getDropletInfo(10000001);
-RateLimit rateLimit = droplet.getRateLimit();</pre>
+<pre>// Fetching all the available services from control panel 
+Services services = apiClient.getServices();</pre>
+<pre>// Fetching all the available containers
+Containers containers = apiClient.getContainers();</pre>
+<pre>// Create a new Node Cluster
+final NodeCluster create = new NodeCluster();
+create.setName( "junit3" );
+create.setRegion( "/api/v1/region/digitalocean/nyc3/" );
+create.setNodeType( "/api/v1/nodetype/digitalocean/512mb/" );
+create.setTargetNumNodes( 1 );
+create.setProvider( "digitalocean" );
+final NodeCluster created = apiClient.createNodeCluster( create );
+</pre> 
 
 Reporting Issues
 ----------------
