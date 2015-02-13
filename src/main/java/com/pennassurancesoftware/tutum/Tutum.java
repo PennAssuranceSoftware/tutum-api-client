@@ -54,6 +54,8 @@ import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
+import com.pennassurancesoftware.tutum.dto.WebhookHandler;
+import com.pennassurancesoftware.tutum.dto.WebhookHandlers;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.type.TagResourceType;
@@ -165,7 +167,7 @@ public interface Tutum {
     *
     * @since v1.0
     */
-   Service createService( Service service ) throws TutumException, RequestUnsuccessfulException;;
+   Service createService( Service service ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * A token allows authentication for agents running in Nodes.  Creates a new token.
@@ -1116,4 +1118,79 @@ public interface Tutum {
     * @since v1.0
     */
    Tag deleteTag( TagResourceType type, String uuid, String name ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Lists all current webhook handlers the service has associated to. Returns a list of Service Webhook Handler objects.
+    *
+    * @param uuid Identifier of the service to list the webhooks of
+    * @return {@link WebhookHandler}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   WebhookHandlers getWebhooks( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Get all the details of an specific webhook handler 
+    *
+    * @param serviceUuid Identifier of the service to list the webhooks of
+    * @param uuid Identifier of the webhook
+    * @return {@link WebhookHandler}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    **/
+   WebhookHandler getWebhook( String serviceUuid, String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Creates a new service webhook handler.
+    *
+    * @param uuid Identifier of the service to list the webhooks of
+    * @return {@link WebhookHandler}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   WebhookHandler createWebhook( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Creates a new service webhook handler.
+    *
+    * @param uuid Identifier of the service to list the webhooks of
+    * @param name Optional name to assign the new webhook
+    * @return {@link WebhookHandler}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   WebhookHandler createWebhook( String uuid, String name ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Deletes specific webhook handler. It will be no longer available to be called.
+    *
+    * @param webhook Webhook that should be deleted
+    * @return {@link WebhookHandler}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   WebhookHandler deleteWebhook( WebhookHandler webhook ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
+    * Executes the webhook and redeploys the associated service.
+    *
+    * @param webhook Webhook that should be called
+    * @return {@link WebhookHandler}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   WebhookHandler callWebhook( WebhookHandler webhook ) throws TutumException, RequestUnsuccessfulException;
+
 }

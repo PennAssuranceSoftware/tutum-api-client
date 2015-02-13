@@ -35,6 +35,8 @@ import com.pennassurancesoftware.tutum.dto.Volume;
 import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
+import com.pennassurancesoftware.tutum.dto.WebhookHandler;
+import com.pennassurancesoftware.tutum.dto.WebhookHandlers;
 import com.pennassurancesoftware.tutum.type.ContainerState;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.type.ServiceState;
@@ -45,7 +47,7 @@ public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "" );
+   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
 
    @Test(groups = { "integration" }, enabled = false)
    public void testActions() throws Exception {
@@ -172,6 +174,59 @@ public class TutumIntegrationTest {
    }
 
    @Test(groups = { "integration" }, enabled = false)
+   public void testWebhookParsing() throws Exception {
+      final WebhookHandler handler = new WebhookHandler( "unit" );
+      handler.setUrl( "/api/v1/service/62115059-c6e3-4e8e-908e-e75a9de95330/webhook/handler/b6d47330-2b70-4587-a3c2-7b9fc2da56ca/call/" );
+
+      Assert.assertNotNull( handler.getServiceUuid() );
+      Assert.assertNotNull( handler.getWebhookUuid() );
+
+      LOG.info( "Service: {}", handler.getServiceUuid() );
+      LOG.info( "Webhook: {}", handler.getWebhookUuid() );
+   }
+
+   @Test(groups = { "integration" }, enabled = true)
+   public void testWebhooks() throws Exception {
+      final Services services = apiClient.getServices();
+
+      Assert.assertNotNull( services );
+      Assert.assertTrue( ( services.getObjects().size() > 0 ) );
+
+      for( Service service : services.getObjects() ) {
+         if( !ServiceState.Terminated.equals( service.getState() ) ) {
+
+            final WebhookHandler created = apiClient.createWebhook( service.getUuid() );
+            final WebhookHandler created2 = apiClient.createWebhook( service.getUuid(), "unit-1-" + IdUtils.smallRandom() );
+            Assert.assertNotNull( created );
+            Assert.assertNotNull( created2 );
+
+            final WebhookHandlers hooks = apiClient.getWebhooks( service.getUuid() );
+            Assert.assertNotNull( hooks );
+            Assert.assertTrue( ( hooks.getObjects().size() > 0 ) );
+            for( WebhookHandler handler : hooks.getObjects() ) {
+
+               final WebhookHandler current = apiClient.getWebhook( handler.getServiceUuid(), handler.getWebhookUuid() );
+               LOG.info( current.toString() );
+
+               apiClient.callWebhook( current );
+
+               Service currentSrv = apiClient.getService( handler.getServiceUuid() );
+               while( currentSrv.isPendingOperation() ) {
+                  LOG.info( "Service: {} State: {}", currentSrv.getName(), currentSrv.getState().value() );
+                  waitFor( 2000 );
+                  currentSrv = apiClient.getService( handler.getServiceUuid() );
+               }
+
+               final WebhookHandler deleted = apiClient.deleteWebhook( current );
+               Assert.assertNotNull( deleted );
+
+               break;
+            }
+         }
+      }
+   }
+
+   @Test(groups = { "integration" }, enabled = false)
    public void testContainers() throws Exception {
       final Containers containers = apiClient.getContainers();
 
@@ -231,7 +286,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test(groups = { "integration" }, enabled = true)
+   @Test(groups = { "integration" }, enabled = false)
    public void testTagging() throws Exception {
       final TagResourceType type = TagResourceType.Service;
       final String uuid = "62115059-c6e3-4e8e-908e-e75a9de95330";

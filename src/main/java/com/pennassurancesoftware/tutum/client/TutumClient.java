@@ -97,9 +97,12 @@ import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
+import com.pennassurancesoftware.tutum.dto.WebhookHandler;
+import com.pennassurancesoftware.tutum.dto.WebhookHandlers;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.type.TagResourceType;
+import com.pennassurancesoftware.tutum.util.IdUtils;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
 
 /** Tutum API client wrapper methods Implementation */
@@ -790,6 +793,7 @@ public class TutumClient implements Tutum {
       if( ( statusCode >= 400 && statusCode < 510 ) ) {
          String jsonStr = httpResponseToString( httpResponse );
          jsonStr = jsonStr == null || "".equals( jsonStr ) ? "{}" : jsonStr;
+         LOG.error( "Target URL: {}", request.getURI() );
          LOG.error( "JSON Message: {}", getRequestMessage( request ) );
          LOG.error( "JSON Response: {}", jsonStr );
 
@@ -981,5 +985,49 @@ public class TutumClient implements Tutum {
       checkNullAndThrowError( name, "Missing required parameter - Tag Name." );
       final Object[] params = { type.value(), uuid, name };
       return ( Tag )perform( new ApiRequest( ApiAction.DELETE_TAG, params ) ).getData();
+   }
+
+   @Override
+   public WebhookHandlers getWebhooks( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( WebhookHandlers )perform( new ApiRequest( ApiAction.WEBHOOK_HANDLERS, params ) ).getData();
+   }
+
+   @Override
+   public WebhookHandler createWebhook( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      return createWebhook( uuid, "webhook-" + IdUtils.smallRandom() );
+   }
+
+   @Override
+   public WebhookHandler createWebhook( String uuid, String name ) throws TutumException, RequestUnsuccessfulException {
+      final Object data = name != null ? new WebhookHandler( name ) : null;
+      final Object[] params = { uuid };
+      final WebhookHandler[] result = ( WebhookHandler[] )perform( new ApiRequest( ApiAction.CREATE_WEBHOOK_HANDLER, data, params ) ).getData();
+      return result[0];
+   }
+
+   @Override
+   public WebhookHandler getWebhook( String serviceUuid, String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( serviceUuid, "Missing required parameter - Service UUID." );
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { serviceUuid, uuid };
+      return ( WebhookHandler )perform( new ApiRequest( ApiAction.GET_WEBHOOK_HANDLER, params ) ).getData();
+   }
+
+   @Override
+   public WebhookHandler deleteWebhook( WebhookHandler webhook ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( webhook.getServiceUuid(), "Missing required parameter - URL." );
+      checkNullAndThrowError( webhook.getWebhookUuid(), "Missing required parameter - URL." );
+      final Object[] params = { webhook.getServiceUuid(), webhook.getWebhookUuid() };
+      return ( WebhookHandler )perform( new ApiRequest( ApiAction.DELETE_WEBHOOK_HANDLER, params ) ).getData();
+   }
+
+   @Override
+   public WebhookHandler callWebhook( WebhookHandler webhook ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( webhook.getServiceUuid(), "Missing required parameter - URL." );
+      checkNullAndThrowError( webhook.getWebhookUuid(), "Missing required parameter - URL." );
+      final Object[] params = { webhook.getServiceUuid(), webhook.getWebhookUuid() };
+      return ( WebhookHandler )perform( new ApiRequest( ApiAction.CALL_WEBHOOK_HANDLER, params ) ).getData();
    }
 }

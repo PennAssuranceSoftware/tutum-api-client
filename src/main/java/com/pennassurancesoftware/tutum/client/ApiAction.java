@@ -44,6 +44,8 @@ import com.pennassurancesoftware.tutum.dto.Volume;
 import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
+import com.pennassurancesoftware.tutum.dto.WebhookHandler;
+import com.pennassurancesoftware.tutum.dto.WebhookHandlers;
 
 /**
  * Enumeration of Tutum RESTful resource information.
@@ -94,6 +96,11 @@ public enum ApiAction {
    TAGS("/%s/%s/tags/", RequestMethod.GET, Tags.class),
    TAG_RESOURCE("/%s/%s/tags/", RequestMethod.POST, Tag[].class),
    DELETE_TAG("/%s/%s/tags/%s/", RequestMethod.DELETE, Tag.class),
+   WEBHOOK_HANDLERS("/service/%s/webhook/handler/", RequestMethod.GET, WebhookHandlers.class),
+   CREATE_WEBHOOK_HANDLER("/service/%s/webhook/handler/", RequestMethod.POST, WebhookHandler[].class),
+   GET_WEBHOOK_HANDLER("/service/%s/webhook/handler/%s/", RequestMethod.GET, WebhookHandler.class),
+   DELETE_WEBHOOK_HANDLER("/service/%s/webhook/handler/%s/", RequestMethod.DELETE, WebhookHandler.class),
+   CALL_WEBHOOK_HANDLER("/service/%s/webhook/handler/%s/call/", RequestMethod.POST, WebhookHandler.class),
 
    ;
 

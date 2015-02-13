@@ -134,6 +134,10 @@ public class Service implements Serializable {
       return image;
    }
 
+   public boolean isPendingOperation() {
+      return getState().isPendingOperation();
+   }
+
    public void setImage( String image ) {
       this.image = image;
    }
