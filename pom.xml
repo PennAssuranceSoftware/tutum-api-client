@@ -13,7 +13,24 @@
     <name>Tutum API Client in Java</name>
     <version>1.01.00-SNAPSHOT</version>
     <description>Tutum API Client in Java</description>
+
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/PennAssuranceSoftware/tutum-api-client/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>codeship</system>
+        <url>https://codeship.com/projects/62970</url>
+    </ciManagement>
+    <scm>
+        <connection>scm:git:git@github.com:PennAssuranceSoftware/tutum-api-client.git</connection>
+        <developerConnection>scm:git:git@github.com:PennAssuranceSoftware/tutum-api-client.git</developerConnection>
+        <url>git@github.com:PennAssuranceSoftware/tutum-api-client.git</url>
+    </scm>
+
     <url>http://pennassurancesoftware.com</url>
+
     <licenses>
         <license>
             <name>The MIT License (MIT)</name>
@@ -21,11 +38,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <scm>
-        <connection>scm:git:git@github.com:PennAssuranceSoftware/tutum-api-client.git</connection>
-        <developerConnection>scm:git:git@github.com:PennAssuranceSoftware/tutum-api-client.git</developerConnection>
-        <url>git@github.com:PennAssuranceSoftware/tutum-api-client.git</url>
-    </scm>
+
     <developers>
         <developer>
             <id>jeromebridge</id>
@@ -100,12 +113,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
@@ -137,27 +144,6 @@
                             <docfilessubdirs>true</docfilessubdirs>
                             <verbose>true</verbose>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>oss.sonatype.org</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <description>${project.version}</description>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>deploy-to-sonatype</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                            <goal>release</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -213,13 +199,5 @@
         </pluginManagement>
     </build>
 
-    <profiles>
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-    </profiles>
 </project>
 
