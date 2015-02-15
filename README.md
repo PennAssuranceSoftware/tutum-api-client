@@ -34,11 +34,11 @@ Samples
 <pre>// Way one, just pass on authToken
 Tutum apiClient = new TutumClient(authToken);</pre>
 <pre>// Way two, pass on version number & authToken
-Tutum apiClient = new TutumClient("v2", authToken);</pre>
+Tutum apiClient = new TutumClient("v1", authToken);</pre>
 <pre>// Way three, pass on version number, authToken & httpClient
 // Go ahead and customize httpClient attributes for requirements
 HttpClient httpclient = new DefaultHttpClient();  
-Tutum apiClient = new TutumClient("v2", authToken, httpClient);
+Tutum apiClient = new TutumClient("v1", authToken, httpClient);
 </pre>
 
 * Let's invoke the method(s) as per need via <code>apiClient</code>
