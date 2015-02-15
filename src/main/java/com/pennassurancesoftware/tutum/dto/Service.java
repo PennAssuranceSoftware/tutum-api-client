@@ -11,13 +11,13 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.pennassurancesoftware.tutum.type.AutoDestoryType;
+import com.pennassurancesoftware.tutum.type.AutoRestartType;
 import com.pennassurancesoftware.tutum.type.DeploymentStrategyType;
 import com.pennassurancesoftware.tutum.type.ServiceState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 
 public class Service implements Serializable {
-   private static final long serialVersionUID = -5254444978757549427L;
-
    public static class Port extends AbstractPort implements Serializable {
       private static final long serialVersionUID = -6442666801663425212L;
    }
@@ -56,12 +56,12 @@ public class Service implements Serializable {
       }
    }
 
+   private static final long serialVersionUID = -5254444978757549427L;
+
    @Expose
-   private String image;
+   private String autodestroy;
    @Expose
-   private Boolean autodestroy;
-   @Expose
-   private Boolean autorestart;
+   private String autorestart;
    @Expose
    private List<Binding> bindings = new ArrayList<Binding>();
    @Expose
@@ -84,6 +84,8 @@ public class Service implements Serializable {
    private Date destroyedDatetime;
    @Expose
    private String entrypoint;
+   @Expose
+   private String image;
    @SerializedName("image_name")
    private String imageName;
    @SerializedName("image_tag")
@@ -130,24 +132,12 @@ public class Service implements Serializable {
    private String uniqueName;
    private String uuid;
 
-   public String getImage() {
-      return image;
+   public AutoDestoryType getAutodestroy() {
+      return EnumerationUtils.lookup( AutoDestoryType.class, autodestroy );
    }
 
-   public boolean isPendingOperation() {
-      return getState().isPendingOperation();
-   }
-
-   public void setImage( String image ) {
-      this.image = image;
-   }
-
-   public Boolean getAutodestroy() {
-      return autodestroy;
-   }
-
-   public Boolean getAutorestart() {
-      return autorestart;
+   public AutoRestartType getAutorestart() {
+      return EnumerationUtils.lookup( AutoRestartType.class, autorestart );
    }
 
    public List<Binding> getBindings() {
@@ -188,6 +178,10 @@ public class Service implements Serializable {
 
    public String getEntrypoint() {
       return entrypoint;
+   }
+
+   public String getImage() {
+      return image;
    }
 
    public String getImageName() {
@@ -278,11 +272,23 @@ public class Service implements Serializable {
       return uuid;
    }
 
-   public void setAutodestroy( Boolean autodestroy ) {
+   public boolean isPendingOperation() {
+      return getState().isPendingOperation();
+   }
+
+   public void setAutodestroy( AutoDestoryType autodestroy ) {
+      setAutodestroy( autodestroy.value() );
+   }
+
+   public void setAutodestroy( String autodestroy ) {
       this.autodestroy = autodestroy;
    }
 
-   public void setAutorestart( Boolean autorestart ) {
+   public void setAutorestart( AutoRestartType autorestart ) {
+      setAutorestart( autorestart.value() );
+   }
+
+   public void setAutorestart( String autorestart ) {
       this.autorestart = autorestart;
    }
 
@@ -328,6 +334,10 @@ public class Service implements Serializable {
 
    public void setEntrypoint( String entrypoint ) {
       this.entrypoint = entrypoint;
+   }
+
+   public void setImage( String image ) {
+      this.image = image;
    }
 
    public void setImageName( String imageName ) {

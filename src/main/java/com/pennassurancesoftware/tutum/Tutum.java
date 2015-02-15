@@ -43,6 +43,7 @@ import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
+import com.pennassurancesoftware.tutum.dto.ServiceFilter;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Tag;
 import com.pennassurancesoftware.tutum.dto.TagFilter;
@@ -707,7 +708,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Services getServices( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   Services getServices( ServiceFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all services in chronological order. Returns a list of Action objects.
@@ -720,7 +721,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Services getServices( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+   Services getServices( ServiceFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all services in chronological order. Returns a list of Action objects.

@@ -9,6 +9,10 @@ public class IdUtils {
       return random( 4 );
    }
 
+   public static String generateName( String prefix ) {
+      return String.format( "%s-%s", prefix, smallRandom() );
+   }
+
    public static String random( int bytes ) {
       final Random ranGen = new SecureRandom();
       byte[] key = new byte[4]; // 16 bytes = 128 bits

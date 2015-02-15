@@ -86,6 +86,7 @@ import com.pennassurancesoftware.tutum.dto.Region;
 import com.pennassurancesoftware.tutum.dto.RegionFilter;
 import com.pennassurancesoftware.tutum.dto.Regions;
 import com.pennassurancesoftware.tutum.dto.Service;
+import com.pennassurancesoftware.tutum.dto.ServiceFilter;
 import com.pennassurancesoftware.tutum.dto.Services;
 import com.pennassurancesoftware.tutum.dto.Tag;
 import com.pennassurancesoftware.tutum.dto.TagFilter;
@@ -176,9 +177,8 @@ public class TutumClient implements Tutum {
    public Service createService( Service service ) throws TutumException, RequestUnsuccessfulException {
       if( null == service
             || null == service.getImage()
-            || null == service.getName()
-            || null == service.getTargetNumContainers() ) {
-         throw new IllegalArgumentException( "Missing required parameters [Image, Name, Targe Number Of Containers] for create service." );
+            || null == service.getName() ) {
+         throw new IllegalArgumentException( "Missing required parameters [Image, Name] for create service." );
       }
       return ( Service )perform( new ApiRequest( ApiAction.CREATE_SERVICE, service ) ).getData();
    }
@@ -458,12 +458,12 @@ public class TutumClient implements Tutum {
    }
 
    @Override
-   public Services getServices( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException {
+   public Services getServices( ServiceFilter filter ) throws TutumException, RequestUnsuccessfulException {
       return getServices( filter, 1 );
    }
 
    @Override
-   public Services getServices( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
+   public Services getServices( ServiceFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException {
       validatePageNo( pageNo );
       return ( Services )perform( new ApiRequest( ApiAction.SERVICES, getQueryParams( pageNo, filter ) ) ).getData();
    }
