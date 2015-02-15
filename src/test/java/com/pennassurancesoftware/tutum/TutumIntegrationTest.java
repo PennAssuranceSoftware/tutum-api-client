@@ -35,7 +35,6 @@ import com.pennassurancesoftware.tutum.dto.VolumeGroup;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.dto.WebhookHandler;
-import com.pennassurancesoftware.tutum.dto.WebhookHandlers;
 import com.pennassurancesoftware.tutum.type.ContainerState;
 import com.pennassurancesoftware.tutum.type.NodeClusterState;
 import com.pennassurancesoftware.tutum.type.ServiceState;
@@ -46,7 +45,7 @@ public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "" );
+   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
 
    @Test(groups = { "integration" }, enabled = false)
    public void testActions() throws Exception {
@@ -120,6 +119,19 @@ public class TutumIntegrationTest {
       }
    }
 
+   @Test(groups = { "integration" }, enabled = true)
+   public void testRegionsPage2() throws Exception {
+      final Regions regions = apiClient.getRegions( 2 );
+
+      Assert.assertNotNull( regions );
+      Assert.assertTrue( ( regions.getObjects().size() > 0 ) );
+
+      LOG.info( regions.getMeta().toString() );
+      for( Region region : regions.getObjects() ) {
+         LOG.info( region.toString() );
+      }
+   }
+
    @Test(groups = { "integration" }, enabled = false)
    public void testRegion() throws Exception {
       final String providerName = "digitalocean";
@@ -162,7 +174,7 @@ public class TutumIntegrationTest {
 
    @Test(groups = { "integration" }, enabled = false)
    public void testServices() throws Exception {
-      final Services services = apiClient.getServices();
+      final Services services = apiClient.getServices( 1 );
 
       Assert.assertNotNull( services );
       Assert.assertTrue( ( services.getObjects().size() > 0 ) );
@@ -184,9 +196,9 @@ public class TutumIntegrationTest {
       LOG.info( "Webhook: {}", handler.getWebhookUuid() );
    }
 
-   @Test(groups = { "integration" }, enabled = true)
+   @Test(groups = { "integration" }, enabled = false)
    public void testWebhooks() throws Exception {
-      final Services services = apiClient.getServices();
+      final Services services = apiClient.getServices( 1 );
 
       Assert.assertNotNull( services );
       Assert.assertTrue( ( services.getObjects().size() > 0 ) );
@@ -199,10 +211,10 @@ public class TutumIntegrationTest {
             Assert.assertNotNull( created );
             Assert.assertNotNull( created2 );
 
-            final WebhookHandlers hooks = apiClient.getWebhooks( service.getUuid() );
+            final List<WebhookHandler> hooks = apiClient.getWebhooks( service.getUuid() );
             Assert.assertNotNull( hooks );
-            Assert.assertTrue( ( hooks.getObjects().size() > 0 ) );
-            for( WebhookHandler handler : hooks.getObjects() ) {
+            Assert.assertTrue( ( hooks.size() > 0 ) );
+            for( WebhookHandler handler : hooks ) {
 
                final WebhookHandler current = apiClient.getWebhook( handler.getServiceUuid(), handler.getWebhookUuid() );
                LOG.info( current.toString() );
@@ -227,7 +239,7 @@ public class TutumIntegrationTest {
 
    @Test(groups = { "integration" }, enabled = false)
    public void testContainers() throws Exception {
-      final Containers containers = apiClient.getContainers();
+      final Containers containers = apiClient.getContainers( 1 );
 
       Assert.assertNotNull( containers );
       Assert.assertTrue( ( containers.getObjects().size() > 0 ) );
@@ -257,7 +269,7 @@ public class TutumIntegrationTest {
 
    @Test(groups = { "integration" }, enabled = false)
    public void testVolumeGroups() throws Exception {
-      final VolumeGroups volGrps = apiClient.getVolumeGroups();
+      final VolumeGroups volGrps = apiClient.getVolumeGroups( 1 );
 
       Assert.assertNotNull( volGrps );
       Assert.assertTrue( ( volGrps.getObjects().size() > 0 ) );
@@ -272,7 +284,7 @@ public class TutumIntegrationTest {
 
    @Test(groups = { "integration" }, enabled = false)
    public void testVolume() throws Exception {
-      final Volumes volumes = apiClient.getVolumes();
+      final Volumes volumes = apiClient.getVolumes( 1 );
 
       Assert.assertNotNull( volumes );
       Assert.assertTrue( ( volumes.getObjects().size() > 0 ) );

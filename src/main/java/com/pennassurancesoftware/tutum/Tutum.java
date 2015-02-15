@@ -26,7 +26,9 @@ import com.pennassurancesoftware.tutum.dto.Action;
 import com.pennassurancesoftware.tutum.dto.ActionFilter;
 import com.pennassurancesoftware.tutum.dto.Actions;
 import com.pennassurancesoftware.tutum.dto.Container;
+import com.pennassurancesoftware.tutum.dto.ContainerFilter;
 import com.pennassurancesoftware.tutum.dto.Containers;
+import com.pennassurancesoftware.tutum.dto.Meta;
 import com.pennassurancesoftware.tutum.dto.Node;
 import com.pennassurancesoftware.tutum.dto.NodeCluster;
 import com.pennassurancesoftware.tutum.dto.NodeClusterFilter;
@@ -56,7 +58,6 @@ import com.pennassurancesoftware.tutum.dto.VolumeGroupFilter;
 import com.pennassurancesoftware.tutum.dto.VolumeGroups;
 import com.pennassurancesoftware.tutum.dto.Volumes;
 import com.pennassurancesoftware.tutum.dto.WebhookHandler;
-import com.pennassurancesoftware.tutum.dto.WebhookHandlers;
 import com.pennassurancesoftware.tutum.exception.RequestUnsuccessfulException;
 import com.pennassurancesoftware.tutum.exception.TutumException;
 import com.pennassurancesoftware.tutum.type.TagResourceType;
@@ -115,6 +116,16 @@ import com.pennassurancesoftware.tutum.type.TagResourceType;
  * </p>
  */
 public interface Tutum {
+   /** Interface that is used to provide object to caller when iterating through objects that require multiple calls */
+   public static interface TutumObjectCallback<T> {
+      /**
+       * Handle a single object pulled back from a call to the Tutum API
+       * @param meta Meta data returned from the called used to get the object
+       * @param object Tutum object to handle in the callback
+       * @return Flag that indicates the iteration should continue or not
+       */
+      boolean handle( Meta meta, T object );
+   }
 
    /**
     * <p>
@@ -226,7 +237,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Actions getActions() throws TutumException, RequestUnsuccessfulException;
+   List<Action> getActions() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all actions in chronological order. Returns a list of Action objects.
@@ -238,7 +249,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Actions getActions( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Action> getActions( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all actions in chronological order. Returns a list of Action objects.
@@ -298,7 +309,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Containers getContainers() throws TutumException, RequestUnsuccessfulException;
+   List<Container> getContainers() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all containers in chronological order. Returns a list of Action objects.
@@ -310,7 +321,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Containers getContainers( ActionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Container> getContainers( ContainerFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all containers in chronological order. Returns a list of Action objects.
@@ -323,7 +334,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Containers getContainers( ActionFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
+   Containers getContainers( ContainerFilter filter, Integer pageNo ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all containers in chronological order. Returns a list of Action objects.
@@ -370,7 +381,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   NodeClusters getNodeClusters() throws TutumException, RequestUnsuccessfulException;
+   List<NodeCluster> getNodeClusters() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all current and recently terminated node clusters. Returns a list of NodeCluster objects.
@@ -394,7 +405,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   NodeClusters getNodeClusters( NodeClusterFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<NodeCluster> getNodeClusters( NodeClusterFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all current and recently terminated node clusters. Returns a list of NodeCluster objects.
@@ -419,7 +430,7 @@ public interface Tutum {
     *
     * @since v1.0
     */
-   Tags getNodeClusterTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
+   List<Tag> getNodeClusterTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all current and recently terminated nodes. Returns a list of Node objects.
@@ -430,7 +441,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Nodes getNodes() throws TutumException, RequestUnsuccessfulException;
+   List<Node> getNodes() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all current and recently terminated nodes. Returns a list of Node objects.
@@ -454,7 +465,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Nodes getNodes( NodeFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Node> getNodes( NodeFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all current and recently terminated nodes. Returns a list of Node objects.
@@ -479,7 +490,7 @@ public interface Tutum {
     *
     * @since v1.0
     */
-   Tags getNodeTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
+   List<Tag> getNodeTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Get all the details of a specific node type
@@ -503,7 +514,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   NodeTypes getNodeTypes() throws TutumException, RequestUnsuccessfulException;
+   List<NodeType> getNodeTypes() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all node types of all supported cloud providers. Returns a list of NodeType objects.
@@ -527,7 +538,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   NodeTypes getNodeTypes( NodeTypeFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<NodeType> getNodeTypes( NodeTypeFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all node types of all supported cloud providers. Returns a list of NodeType objects.
@@ -563,7 +574,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Providers getProviders() throws TutumException, RequestUnsuccessfulException;
+   List<Provider> getProviders() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all supported cloud providers. Returns a list of Provider objects.
@@ -587,7 +598,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Providers getProviders( ProviderFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Provider> getProviders( ProviderFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all supported cloud providers. Returns a list of Provider objects.
@@ -624,7 +635,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Regions getRegions() throws TutumException, RequestUnsuccessfulException;
+   List<Region> getRegions() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all regions of all supported cloud providers. Returns a list of Region objects.
@@ -648,7 +659,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Regions getRegions( RegionFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Region> getRegions( RegionFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all regions of all supported cloud providers. Returns a list of Region objects.
@@ -696,7 +707,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Services getServices() throws TutumException, RequestUnsuccessfulException;
+   List<Service> getServices() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all services in chronological order. Returns a list of Action objects.
@@ -708,7 +719,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Services getServices( ServiceFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Service> getServices( ServiceFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all services in chronological order. Returns a list of Action objects.
@@ -745,7 +756,7 @@ public interface Tutum {
     *
     * @since v1.0
     */
-   Tags getServiceTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
+   List<Tag> getServiceTags( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all tags in chronological order. Returns a list of Tag objects.
@@ -758,7 +769,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Tags getTags( TagResourceType type, String uuid ) throws TutumException, RequestUnsuccessfulException;
+   List<Tag> getTags( TagResourceType type, String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all tags in chronological order. Returns a list of Tag objects.
@@ -786,7 +797,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Tags getTags( TagResourceType type, String uuid, TagFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Tag> getTags( TagResourceType type, String uuid, TagFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all tags in chronological order. Returns a list of Tag objects.
@@ -836,7 +847,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   VolumeGroups getVolumeGroups() throws TutumException, RequestUnsuccessfulException;
+   List<VolumeGroup> getVolumeGroups() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all volume group in chronological order. Returns a list of Volume Group objects.
@@ -860,7 +871,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   VolumeGroups getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<VolumeGroup> getVolumeGroups( VolumeGroupFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all volume group in chronological order. Returns a list of Volume Group objects.
@@ -884,7 +895,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Volumes getVolumes() throws TutumException, RequestUnsuccessfulException;
+   List<Volume> getVolumes() throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all volumes in chronological order. Returns a list of Volume objects.
@@ -908,7 +919,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   Volumes getVolumes( VolumeFilter filter ) throws TutumException, RequestUnsuccessfulException;
+   List<Volume> getVolumes( VolumeFilter filter ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Lists all volumes in chronological order. Returns a list of Volume objects.
@@ -1130,7 +1141,7 @@ public interface Tutum {
     *
     * @since v1.0
     **/
-   WebhookHandlers getWebhooks( String uuid ) throws TutumException, RequestUnsuccessfulException;
+   List<WebhookHandler> getWebhooks( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
     * Get all the details of an specific webhook handler 

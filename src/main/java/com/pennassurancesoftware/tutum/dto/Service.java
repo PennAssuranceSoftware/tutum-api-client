@@ -276,6 +276,10 @@ public class Service implements Serializable {
       return getState().isPendingOperation();
    }
 
+   public boolean isTerminated() {
+      return ServiceState.Terminated.equals( getState() );
+   }
+
    public void setAutodestroy( AutoDestoryType autodestroy ) {
       setAutodestroy( autodestroy.value() );
    }

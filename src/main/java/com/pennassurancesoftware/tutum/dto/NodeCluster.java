@@ -41,6 +41,10 @@ public class NodeCluster implements Serializable {
    private Integer targetNumNodes;
    private String uuid;
 
+   public boolean isPendingOperation() {
+      return getState().isPendingOperation();
+   }
+
    public Integer getCurrentNumNodes() {
       return currentNumNodes;
    }
@@ -95,6 +99,10 @@ public class NodeCluster implements Serializable {
 
    public boolean isDeployed() {
       return NodeClusterState.Deployed.equals( getState() );
+   }
+   
+   public boolean isTerminated() {
+      return NodeClusterState.Terminated.equals( getState() );
    }
 
    public void setCurrentNumNodes( Integer currentNumNodes ) {

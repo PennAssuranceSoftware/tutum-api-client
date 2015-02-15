@@ -10,10 +10,12 @@ public class Constants {
    public static final String JSON_CONTENT_TYPE = "application/json";
    public static final String NO_CONTENT_JSON_STRUCT = "{\"delete\": {\"request_status\": true, \"status_code\": %s}}";
    public static final String PARAM_PAGE_NO = "page";
+   public static final String PARAM_OFFSET = "offset";
    public static final String RATE_LIMIT_ELEMENT_NAME = "rate_limit";
    public static final String RATE_LIMIT_JSON_STRUCT = "\"rate_limit\": { \"limit\": %s, \"remaining\": %s, \"reset\": \"%s\"}";
    public static final Integer START_PAGE_NO = 1;
    public static final String URL_PATH_SEPARATOR = "/";
    public static final String UTF_8 = "utf-8";
+   public static final Integer DEFAULT_LIMIT = 25;
 
 }
