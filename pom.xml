@@ -214,6 +214,10 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <homedir>${gpg.homedir}</homedir>
+                                    <keyname>${gpg.keyname}</keyname>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
