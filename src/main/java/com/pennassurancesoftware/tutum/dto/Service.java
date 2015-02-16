@@ -132,6 +132,10 @@ public class Service implements Serializable {
    private String uniqueName;
    private String uuid;
 
+   public boolean canBeStarted() {
+      return getState().canStartFrom();
+   }
+
    public AutoDestoryType getAutodestroy() {
       return EnumerationUtils.lookup( AutoDestoryType.class, autodestroy );
    }
@@ -439,5 +443,9 @@ public class Service implements Serializable {
    @Override
    public String toString() {
       return ReflectionToStringBuilder.toString( this );
+   }
+
+   public boolean isStarted() {
+      return ServiceState.Running.equals( getState() );
    }
 }

@@ -2,7 +2,7 @@ package com.pennassurancesoftware.tutum.type;
 
 public enum ServiceState implements CodeEnum {
    /** The service has been created and has no deployed containers yet. Possible actions in this state: start, terminate. */
-   Init("Init"),
+   Init("Init", false, true),
    /** All containers for the service are either starting or already running. No actions allowed in this state. */
    Starting("Starting", true),
    /** All containers for the service are deployed and running. Possible actions in this state: stop, redeploy, terminate. */
@@ -16,7 +16,7 @@ public enum ServiceState implements CodeEnum {
    /** All containers for the service are either stopping or already stopped. No actions allowed in this state. */
    Stopping("Stopping", true),
    /** All containers for the service are stopped. Possible actions in this state: start, redeploy, terminate. */
-   Stopped("Stopped"),
+   Stopped("Stopped", false, true),
    /** All containers for the service are either being terminated or already terminated. No actions allowed in this state. */
    Terminating("Terminating", true),
    /** The service and all its containers have been terminated. No actions allowed in this state. */
@@ -28,6 +28,7 @@ public enum ServiceState implements CodeEnum {
 
    private String value;
    private boolean pendingOperation = false;
+   private boolean canStartFrom = false;
 
    private ServiceState( String value ) {
       this.value = value;
@@ -36,6 +37,16 @@ public enum ServiceState implements CodeEnum {
    private ServiceState( String value, boolean pendingOperation ) {
       this.value = value;
       this.pendingOperation = pendingOperation;
+   }
+
+   private ServiceState( String value, boolean pendingOperation, boolean canStartFrom ) {
+      this.value = value;
+      this.pendingOperation = pendingOperation;
+      this.canStartFrom = canStartFrom;
+   }
+
+   public boolean canStartFrom() {
+      return canStartFrom;
    }
 
    public boolean isPendingOperation() {
