@@ -14,12 +14,34 @@ import com.google.gson.annotations.SerializedName;
 import com.pennassurancesoftware.tutum.type.AutoDestoryType;
 import com.pennassurancesoftware.tutum.type.AutoRestartType;
 import com.pennassurancesoftware.tutum.type.DeploymentStrategyType;
+import com.pennassurancesoftware.tutum.type.ProtocolType;
 import com.pennassurancesoftware.tutum.type.ServiceState;
 import com.pennassurancesoftware.tutum.util.EnumerationUtils;
 
 public class Service implements Serializable {
    public static class Port extends AbstractPort implements Serializable {
       private static final long serialVersionUID = -6442666801663425212L;
+
+      public Port( ProtocolType protocol, Integer innerPort ) {
+         this( protocol, innerPort, true );
+      }
+
+      public Port( ProtocolType protocol, Integer innerPort, boolean published ) {
+         setProtocol( protocol );
+         setInnerPort( innerPort );
+         setPublished( published );
+      }
+
+      public Port( ProtocolType protocol, Integer innerPort, Integer outerPort ) {
+         this( protocol, innerPort, outerPort, true );
+      }
+
+      public Port( ProtocolType protocol, Integer innerPort, Integer outerPort, boolean published ) {
+         setProtocol( protocol );
+         setInnerPort( innerPort );
+         setOuterPort( outerPort );
+         setPublished( published );
+      }
    }
 
    public static class RelatedService implements Serializable {
@@ -27,9 +49,18 @@ public class Service implements Serializable {
 
       @SerializedName("from_service")
       private String fromService;
+      @Expose
       private String name;
+      @Expose
       @SerializedName("to_service")
       private String toService;
+
+      public RelatedService() {}
+
+      public RelatedService( String name, String toService ) {
+         setName( name );
+         setToService( toService );
+      }
 
       public String getFromService() {
          return fromService;
@@ -91,10 +122,10 @@ public class Service implements Serializable {
    @SerializedName("image_tag")
    private String imageTag;
    @SerializedName("linked_from_service")
-   private List<String> linkedFromServices = new ArrayList<String>();
+   private List<RelatedService> linkedFromServices = new ArrayList<RelatedService>();
    @Expose
    @SerializedName("linked_to_service")
-   private List<String> linkedToService = new ArrayList<String>();
+   private List<RelatedService> linkedToService = new ArrayList<RelatedService>();
    @SerializedName("link_variables")
    private Map<String, String> linkVariables = new HashMap<String, String>();
    private Integer memory;
@@ -196,11 +227,11 @@ public class Service implements Serializable {
       return imageTag;
    }
 
-   public List<String> getLinkedFromServices() {
+   public List<RelatedService> getLinkedFromServices() {
       return linkedFromServices;
    }
 
-   public List<String> getLinkedToService() {
+   public List<RelatedService> getLinkedToService() {
       return linkedToService;
    }
 
@@ -280,6 +311,10 @@ public class Service implements Serializable {
       return getState().isPendingOperation();
    }
 
+   public boolean isStarted() {
+      return ServiceState.Running.equals( getState() );
+   }
+
    public boolean isTerminated() {
       return ServiceState.Terminated.equals( getState() );
    }
@@ -356,11 +391,11 @@ public class Service implements Serializable {
       this.imageTag = imageTag;
    }
 
-   public void setLinkedFromServices( List<String> linkedFromServices ) {
+   public void setLinkedFromServices( List<RelatedService> linkedFromServices ) {
       this.linkedFromServices = linkedFromServices;
    }
 
-   public void setLinkedToService( List<String> linkedToService ) {
+   public void setLinkedToService( List<RelatedService> linkedToService ) {
       this.linkedToService = linkedToService;
    }
 
@@ -443,9 +478,5 @@ public class Service implements Serializable {
    @Override
    public String toString() {
       return ReflectionToStringBuilder.toString( this );
-   }
-
-   public boolean isStarted() {
-      return ServiceState.Running.equals( getState() );
    }
 }
