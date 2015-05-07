@@ -1007,7 +1007,7 @@ public class TutumClient implements Tutum {
 
    private Header[] getRequestHeaders() {
       Header[] headers =
-         { new BasicHeader( "X-User-Agent", "Tutum API Client by myjeeva.com" ),
+         { new BasicHeader( "X-User-Agent", "Tutum API Client by PennAssuranceSoftware.com" ),
             new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
             new BasicHeader( "Authorization", "ApiKey " + authToken ) };
       return headers;
