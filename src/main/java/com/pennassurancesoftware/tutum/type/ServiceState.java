@@ -22,7 +22,7 @@ public enum ServiceState implements CodeEnum {
    /** The service and all its containers have been terminated. No actions allowed in this state. */
    Terminated("Terminated"),
    /** There are no containers to be deployed for this service. Possible actions in this state: terminate. */
-   NotRunning("Not running"),
+   NotRunning("Not running", false, true),
    /** Unknown or Not Applicable */
    Null(""), ;
 
