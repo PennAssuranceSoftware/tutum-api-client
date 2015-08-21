@@ -11,7 +11,7 @@
     <artifactId>tutum-api-client</artifactId>
     <packaging>jar</packaging>
     <name>Tutum API Client in Java</name>
-    <version>1.02.00-SNAPSHOT</version>
+    <version>1.01.01</version>
     <description>Tutum API Client in Java</description>
 
 
