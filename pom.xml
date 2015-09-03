@@ -156,6 +156,8 @@
 			</plugin>
 
 			<!-- Automatically Release From OSS Staging Repository -->
+			<!-- Manual Steps: http://central.sonatype.org/pages/releasing-the-deployment.html -->
+			<!-- Log into site: https://oss.sonatype.org/ -->
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
