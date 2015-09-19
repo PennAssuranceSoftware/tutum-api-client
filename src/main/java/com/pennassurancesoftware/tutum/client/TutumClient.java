@@ -183,10 +183,7 @@ public class TutumClient implements Tutum {
 
    @Override
    public NodeCluster createNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
-      if( null == cluster
-            || null == cluster.getName()
-            || null == cluster.getRegion()
-            || null == cluster.getNodeType() ) {
+      if( null == cluster || null == cluster.getName() || null == cluster.getRegion() || null == cluster.getNodeType() ) {
          throw new IllegalArgumentException( "Missing required parameters [Name, Region, Node Type] for create node cluster." );
       }
       return ( NodeCluster )perform( new ApiRequest( ApiAction.CREATE_NODECLUSTER, cluster ) ).getData();
@@ -194,9 +191,7 @@ public class TutumClient implements Tutum {
 
    @Override
    public Service createService( Service service ) throws TutumException, RequestUnsuccessfulException {
-      if( null == service
-            || null == service.getImage()
-            || null == service.getName() ) {
+      if( null == service || null == service.getImage() || null == service.getName() ) {
          throw new IllegalArgumentException( "Missing required parameters [Image, Name] for create service." );
       }
       return ( Service )perform( new ApiRequest( ApiAction.CREATE_SERVICE, service ) ).getData();
@@ -921,9 +916,15 @@ public class TutumClient implements Tutum {
       int statusCode = httpResponse.getStatusLine().getStatusCode();
       String response = "";
 
-      if( HttpStatus.SC_OK == statusCode || HttpStatus.SC_CREATED == statusCode
-            || HttpStatus.SC_ACCEPTED == statusCode ) {
+      if( HttpStatus.SC_OK == statusCode || HttpStatus.SC_CREATED == statusCode || HttpStatus.SC_ACCEPTED == statusCode ) {
          response = httpResponseToString( httpResponse );
+         if( LOG.isDebugEnabled() ) {
+            String jsonStr = response;
+            jsonStr = jsonStr == null || "".equals( jsonStr ) ? "{}" : jsonStr;
+            LOG.debug( "Target URL: {}", request.getURI() );
+            LOG.debug( "JSON Message: {}", StringUtils.defaultIfEmpty( getRequestMessage( request ), "N/A" ) );
+            LOG.debug( "JSON Response: {}", jsonStr );
+         }
       }
       else if( HttpStatus.SC_NO_CONTENT == statusCode ) {
          // in a way its always true from client perspective if there is no exception.
@@ -1006,8 +1007,7 @@ public class TutumClient implements Tutum {
    }
 
    private Header[] getRequestHeaders() {
-      Header[] headers =
-         { new BasicHeader( "X-User-Agent", "Tutum API Client by PennAssuranceSoftware.com" ),
+      Header[] headers = { new BasicHeader( "X-User-Agent", "Tutum API Client by PennAssuranceSoftware.com" ),
             new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
             new BasicHeader( "Authorization", "ApiKey " + authToken ) };
       return headers;
