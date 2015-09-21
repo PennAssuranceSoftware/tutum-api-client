@@ -214,6 +214,7 @@
 		</pluginManagement>
 	</build>
 
+    <!-- How To Setup Maven Central Releases: http://www.yegor256.com/2014/08/19/how-to-release-to-maven-central.html -->
 	<profiles>
 		<profile>
 			<id>release</id>
