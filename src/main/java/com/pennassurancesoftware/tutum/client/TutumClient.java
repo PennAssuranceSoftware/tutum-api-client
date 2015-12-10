@@ -713,6 +713,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Service scaleService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.SCALE_SERVICE, ( Object )null, params ) ).getData();
+   }
+
+   @Override
    public Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };

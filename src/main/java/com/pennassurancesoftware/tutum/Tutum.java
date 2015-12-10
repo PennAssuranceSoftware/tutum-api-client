@@ -959,6 +959,18 @@ public interface Tutum {
    Container startContainer( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
+    * Scales the service to its current target_num_containers field.
+    *
+    * @param service Service object with the UUID of the service to start
+    * @return {@link Service}
+    * @throws TutumException
+    * @throws RequestUnsuccessfulException
+    *
+    * @since v1.0
+    */
+   Service scaleService( String uuid ) throws TutumException, RequestUnsuccessfulException;
+
+   /**
     * Starts all containers in a stopped or partly running service.
     *
     * @param service Service object with the UUID of the service to start
@@ -1144,7 +1156,7 @@ public interface Tutum {
    List<WebhookHandler> getWebhooks( String uuid ) throws TutumException, RequestUnsuccessfulException;
 
    /**
-    * Get all the details of an specific webhook handler 
+    * Get all the details of an specific webhook handler
     *
     * @param serviceUuid Identifier of the service to list the webhooks of
     * @param uuid Identifier of the webhook
