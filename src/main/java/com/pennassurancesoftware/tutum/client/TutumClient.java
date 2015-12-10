@@ -780,22 +780,19 @@ public class TutumClient implements Tutum {
    @Override
    public Node updateNode( Node node ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( node.getUuid(), "Missing required parameter - UUID." );
-      final Object[] params = { node.getUuid() };
-      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, params ) ).getData();
+      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, node ) ).getData();
    }
 
    @Override
    public NodeCluster updateNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( cluster.getUuid(), "Missing required parameter - UUID." );
-      final Object[] params = { cluster.getUuid() };
-      return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, params ) ).getData();
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, cluster ) ).getData();
    }
 
    @Override
    public Service updateService( Service service ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( service.getUuid(), "Missing required parameter - UUID." );
-      final Object[] params = { service.getUuid() };
-      return ( Service )perform( new ApiRequest( ApiAction.UPDATE_SERVICE, params ) ).getData();
+      return ( Service )perform( new ApiRequest( ApiAction.UPDATE_SERVICE, service ) ).getData();
    }
 
    @Override
