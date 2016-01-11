@@ -713,6 +713,13 @@ public class TutumClient implements Tutum {
    }
 
    @Override
+   public Service scaleService( String uuid ) throws TutumException, RequestUnsuccessfulException {
+      checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
+      final Object[] params = { uuid };
+      return ( Service )perform( new ApiRequest( ApiAction.SCALE_SERVICE, ( Object )null, params ) ).getData();
+   }
+
+   @Override
    public Service startService( String uuid ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( uuid, "Missing required parameter - UUID." );
       final Object[] params = { uuid };
@@ -781,21 +788,53 @@ public class TutumClient implements Tutum {
    public Node updateNode( Node node ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( node.getUuid(), "Missing required parameter - UUID." );
       final Object[] params = { node.getUuid() };
-      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, params ) ).getData();
+      return ( Node )perform( new ApiRequest( ApiAction.UPDATE_NODE, node, params ) ).getData();
    }
 
    @Override
    public NodeCluster updateNodeCluster( NodeCluster cluster ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( cluster.getUuid(), "Missing required parameter - UUID." );
-      final Object[] params = { cluster.getUuid() };
-      return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, params ) ).getData();
+      NodeCluster updateCluster = new NodeCluster();
+      updateCluster.setUuid( cluster.getUuid() );
+      updateCluster.setTags( cluster.getTags() );
+      updateCluster.setTargetNumNodes( cluster.getTargetNumNodes() );
+
+      final Object[] params = { updateCluster.getUuid() };
+      return ( NodeCluster )perform( new ApiRequest( ApiAction.UPDATE_NODECLUSTER, updateCluster, params ) ).getData();
    }
 
    @Override
    public Service updateService( Service service ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( service.getUuid(), "Missing required parameter - UUID." );
+      final Service updateService = new Service();
+      updateService.setAutodestroy(service.getAutodestroy());
+      updateService.setAutorestart(service.getAutorestart());
+      updateService.setBindings(service.getBindings());
+      updateService.setContainerEnvvars(service.getContainerEnvvars());
+      updateService.setContainerPorts(service.getContainerPorts());
+      updateService.setCpuShares(service.getCpuShares());
+      updateService.setDeploymentStrategy(service.getDeploymentStrategy());
+      updateService.setEntrypoint(service.getEntrypoint());
+      updateService.setImage(service.getImage());
+      updateService.setImageName(service.getImageName());
+      updateService.setImageTag(service.getImageTag());
+      updateService.setLinkedFromServices(service.getLinkedFromServices());
+      updateService.setLinkedToService(service.getLinkedToService());
+      updateService.setLinkVariables(service.getLinkVariables());
+      updateService.setMemory(service.getMemory());
+      updateService.setPrivileged(service.getPrivileged());
+      updateService.setResourceUri(service.getResourceUri());
+      updateService.setRoles(service.getRoles());
+      updateService.setRunCommand(service.getRunCommand());
+      updateService.setRunningNumContainers(service.getRunningNumContainers());
+      updateService.setSequentialDeployment(service.getSequentialDeployment());
+      updateService.setTags(service.getTags());
+      updateService.setTargetNumContainers(service.getTargetNumContainers());
+      updateService.setUniqueName(service.getUniqueName());
+      updateService.setUuid(service.getUuid());
+
       final Object[] params = { service.getUuid() };
-      return ( Service )perform( new ApiRequest( ApiAction.UPDATE_SERVICE, params ) ).getData();
+      return ( Service )perform( new ApiRequest( ApiAction.UPDATE_SERVICE, updateService, params ) ).getData();
    }
 
    @Override
