@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -108,8 +109,11 @@ import com.pennassurancesoftware.tutum.type.TagResourceType;
 import com.pennassurancesoftware.tutum.util.IdUtils;
 import com.pennassurancesoftware.tutum.util.QueryParamBuilder;
 
-/** Tutum API client wrapper methods Implementation */
+/**
+ * Tutum API client wrapper methods Implementation
+ */
 public class TutumClient implements Tutum {
+
    public static interface PagingCallback<T extends Base<?>> {
       /**
        * Callback provides the next page based on the page parameter
@@ -1048,7 +1052,8 @@ public class TutumClient implements Tutum {
    private Header[] getRequestHeaders() {
       Header[] headers = { new BasicHeader( "X-User-Agent", "Tutum API Client by PennAssuranceSoftware.com" ),
             new BasicHeader( "Content-Type", Constants.JSON_CONTENT_TYPE ),
-            new BasicHeader( "Authorization", "ApiKey " + authToken ) };
+            new BasicHeader( "Authorization", "Basic " + Base64.encodeBase64String( authToken.getBytes() ) )
+      };
       return headers;
    }
 
