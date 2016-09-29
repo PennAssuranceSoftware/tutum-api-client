@@ -45,7 +45,7 @@ public class TutumIntegrationTest {
    private static final Logger LOG = LoggerFactory.getLogger( TutumIntegrationTest.class );
 
    /** Fill in your auth token here should be in the format: [USER]:[API_KEY] */
-   private Tutum apiClient = new TutumClient( "pennassurancesoftware:1aae8e176f52132240f270320d122589dd66fec0" );
+   private Tutum apiClient = new TutumClient( "jeromebridge:3774c524-4ad4-445c-886b-ce4e4b27c9b6" );
 
    @Test(groups = { "integration" }, enabled = false)
    public void testActions() throws Exception {
@@ -119,7 +119,7 @@ public class TutumIntegrationTest {
       }
    }
 
-   @Test(groups = { "integration" }, enabled = true)
+   @Test(groups = { "integration" }, enabled = false)
    public void testRegionsPage2() throws Exception {
       final Regions regions = apiClient.getRegions( 2 );
 
@@ -172,12 +172,12 @@ public class TutumIntegrationTest {
       LOG.info( token.toString() );
    }
 
-   @Test(groups = { "integration" }, enabled = false)
+   @Test(groups = { "integration" }, enabled = true)
    public void testServices() throws Exception {
       final Services services = apiClient.getServices( 1 );
 
       Assert.assertNotNull( services );
-      Assert.assertTrue( ( services.getObjects().size() > 0 ) );
+      // Assert.assertTrue( ( services.getObjects().size() > 0 ) );
 
       for( Service service : services.getObjects() ) {
          LOG.info( service.toString() );

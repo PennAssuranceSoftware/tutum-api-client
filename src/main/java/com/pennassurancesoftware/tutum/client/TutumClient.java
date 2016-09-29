@@ -135,7 +135,7 @@ public class TutumClient implements Tutum {
    private Gson serialize;
 
    /** Tutum API Host is <code>dashboard.tutum.co</code> */
-   protected String apiHost = "dashboard.tutum.co";
+   protected String apiHost = "cloud.docker.com";
 
    /** Tutum API version. defaults to v1 from constructor */
    protected String apiVersion;
@@ -811,31 +811,31 @@ public class TutumClient implements Tutum {
    public Service updateService( Service service ) throws TutumException, RequestUnsuccessfulException {
       checkNullAndThrowError( service.getUuid(), "Missing required parameter - UUID." );
       final Service updateService = new Service();
-      updateService.setAutodestroy(service.getAutodestroy());
-      updateService.setAutorestart(service.getAutorestart());
-      updateService.setBindings(service.getBindings());
-      updateService.setContainerEnvvars(service.getContainerEnvvars());
-      updateService.setContainerPorts(service.getContainerPorts());
-      updateService.setCpuShares(service.getCpuShares());
-      updateService.setDeploymentStrategy(service.getDeploymentStrategy());
-      updateService.setEntrypoint(service.getEntrypoint());
-      updateService.setImage(service.getImage());
-      updateService.setImageName(service.getImageName());
-      updateService.setImageTag(service.getImageTag());
-      updateService.setLinkedFromServices(service.getLinkedFromServices());
-      updateService.setLinkedToService(service.getLinkedToService());
-      updateService.setLinkVariables(service.getLinkVariables());
-      updateService.setMemory(service.getMemory());
-      updateService.setPrivileged(service.getPrivileged());
-      updateService.setResourceUri(service.getResourceUri());
-      updateService.setRoles(service.getRoles());
-      updateService.setRunCommand(service.getRunCommand());
-      updateService.setRunningNumContainers(service.getRunningNumContainers());
-      updateService.setSequentialDeployment(service.getSequentialDeployment());
-      updateService.setTags(service.getTags());
-      updateService.setTargetNumContainers(service.getTargetNumContainers());
-      updateService.setUniqueName(service.getUniqueName());
-      updateService.setUuid(service.getUuid());
+      updateService.setAutodestroy( service.getAutodestroy() );
+      updateService.setAutorestart( service.getAutorestart() );
+      updateService.setBindings( service.getBindings() );
+      updateService.setContainerEnvvars( service.getContainerEnvvars() );
+      updateService.setContainerPorts( service.getContainerPorts() );
+      updateService.setCpuShares( service.getCpuShares() );
+      updateService.setDeploymentStrategy( service.getDeploymentStrategy() );
+      updateService.setEntrypoint( service.getEntrypoint() );
+      updateService.setImage( service.getImage() );
+      updateService.setImageName( service.getImageName() );
+      updateService.setImageTag( service.getImageTag() );
+      updateService.setLinkedFromServices( service.getLinkedFromServices() );
+      updateService.setLinkedToService( service.getLinkedToService() );
+      updateService.setLinkVariables( service.getLinkVariables() );
+      updateService.setMemory( service.getMemory() );
+      updateService.setPrivileged( service.getPrivileged() );
+      updateService.setResourceUri( service.getResourceUri() );
+      updateService.setRoles( service.getRoles() );
+      updateService.setRunCommand( service.getRunCommand() );
+      updateService.setRunningNumContainers( service.getRunningNumContainers() );
+      updateService.setSequentialDeployment( service.getSequentialDeployment() );
+      updateService.setTags( service.getTags() );
+      updateService.setTargetNumContainers( service.getTargetNumContainers() );
+      updateService.setUniqueName( service.getUniqueName() );
+      updateService.setUuid( service.getUuid() );
 
       final Object[] params = { service.getUuid() };
       return ( Service )perform( new ApiRequest( ApiAction.UPDATE_SERVICE, updateService, params ) ).getData();
@@ -871,7 +871,10 @@ public class TutumClient implements Tutum {
    }
 
    private String createPath( ApiRequest request ) {
-      String path = Constants.URL_PATH_SEPARATOR + "api" + Constants.URL_PATH_SEPARATOR + apiVersion + request.getApiAction().getPath();
+      String path =
+            Constants.URL_PATH_SEPARATOR + "api" + Constants.URL_PATH_SEPARATOR
+                  + request.getApiAction().category() + Constants.URL_PATH_SEPARATOR
+                  + apiVersion + request.getApiAction().getPath();
       return ( null == request.getParams() ? path : String.format( path, request.getParams() ) );
    }
 
